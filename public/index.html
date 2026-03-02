@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART-LOUMA — Plateforme AgriTech B2B Sénégal</title>
+  <meta name="description" content="Plateforme B2B intelligente connectant producteurs des Niayes et restaurateurs de Dakar. Commandez des légumes frais directement à la source.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Swiper (pour galerie) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Notre CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Styles slider custom -->
+  <style>
+    .slider-outer { position:relative; overflow:hidden; border-radius:24px; height:520px; box-shadow:var(--shadow-lg); }
+    .slider-track { display:flex; height:100%; transition:transform .6s cubic-bezier(.4,0,.2,1); }
+    .slide { flex:0 0 100%; position:relative; }
+    .slide img { width:100%;height:100%;object-fit:cover; }
+    .slide-caption { position:absolute;bottom:0;left:0;right:0;padding:2.5rem;background:linear-gradient(to top,rgba(27,67,50,.9) 0%,transparent 100%);color:#fff; }
+    .slide-caption h4 { font-size:1.4rem;margin-bottom:.3rem; }
+    .slide-caption p { opacity:.8;font-size:.9rem; }
+    .slider-nav-btn { position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,.9);color:var(--dark);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:var(--transition); }
+    .slider-nav-btn:hover { background:var(--white);box-shadow:var(--shadow-lg); }
+    #sliderPrev { left:1rem; }
+    #sliderNext { right:1rem; }
+    .slider-dots { display:flex;justify-content:center;gap:.5rem;margin-top:1.25rem; }
+    .slider-dot { width:8px;height:8px;border-radius:50%;border:none;background:var(--gray-light);cursor:pointer;transition:var(--transition);padding:0; }
+    .slider-dot.active { background:var(--green);width:24px;border-radius:4px; }
+    @media(max-width:768px){ .slider-outer{height:300px;} }
+  </style>
+</head>
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="navbar" id="navbar">
+  <a href="#home" class="nav-logo">
+    <div class="logo-badge">
+      <img src="assets/logo-smart-luuma.png" alt="Smart Luuma" class="logo-img">
+    </div>
+    <span class="logo-text">Smart Luuma</span>
+  </a>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home"        class="active">Accueil</a></li>
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#gallery">Galerie</a></li>
+    <li><a href="#marketplace">Marketplace</a></li>
+    <li><a href="#producer" id="producerNavLink">Producteurs</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="admin.html" id="adminNavLink" style="display:none;color:var(--amber);font-weight:700"><i class="fas fa-cogs"></i> Admin</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <div id="userInfo" style="display:none;align-items:center;gap:.5rem"></div>
+    <button class="btn btn-outline" id="loginBtn">
+      <i class="fas fa-sign-in-alt"></i> Connexion
+    </button>
+    <button class="btn btn-primary" id="registerBtn">
+      <i class="fas fa-user-plus"></i> S'inscrire
+    </button>
+    <button class="btn-icon" id="cartBtn" style="position:relative">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="home">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-grain"></div>
+
+  <div class="hero-container">
+    <div class="hero-content" data-reveal>
+      <div class="hero-tag">
+        <i class="fas fa-leaf"></i> Plateforme AgriTech B2B — Sénégal
+      </div>
+      <h1>Du Champ à l'Assiette, <em>Sans Intermédiaire</em></h1>
+      <p>Connectons directement les producteurs des Niayes aux restaurateurs de Dakar. Réduisez le gaspillage, payez juste, livraison le lendemain matin.</p>
+      <div class="hero-actions">
+        <a href="#marketplace" class="btn btn-amber btn-lg">
+          <i class="fas fa-store"></i> Explorer le marché
+        </a>
+        <a href="#about" class="btn btn-lg" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)">
+          <i class="fas fa-info-circle"></i> En savoir plus
+        </a>
+      </div>
+
+      <div class="hero-demo" data-reveal data-reveal-delay="100">
+        <div class="hero-demo-head">
+          <div class="hero-demo-title">
+            <i class="fas fa-play-circle"></i>
+            <span>Vidéo démo</span>
+          </div>
+          <small>Découvrez la plateforme en quelques secondes</small>
+        </div>
+        <div class="hero-demo-player">
+          <video controls playsinline preload="metadata">
+            <source src="assettes/1220.mp4" type="video/mp4">
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat-item">
+          <span id="heroProducers">0</span>
+          <small>Producteurs actifs</small>
+        </div>
+        <div class="hero-stat-item">
+          <span id="heroConsumers">0</span>
+          <small>Restaurateurs</small>
+        </div>
+        <div class="hero-stat-item">
+          <span id="heroTonnes">0</span>
+          <small>kg échangés</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual" data-reveal data-reveal-delay="200">
+      <div class="hero-img-wrapper">
+        <img src="https://aps.sn/wp-content/uploads/2026/02/gombo.webp" alt="Marchés frais Sénégal">
+      </div>
+      <div class="hero-card-float left">
+        <div class="icon-wrap" style="background:var(--green-pale);color:var(--green)">🌿</div>
+        <div>
+          <strong style="font-size:.8rem">Livraison fraîche</strong><br>
+          <span style="font-size:.72rem;color:var(--gray)">Récolté ce matin</span>
+        </div>
+      </div>
+      <div class="hero-card-float top">
+        <div class="icon-wrap" style="background:#FEF3C7;color:#92400E">💰</div>
+        <div>
+          <strong style="font-size:.8rem">-200% intermédiaires</strong><br>
+          <span style="font-size:.72rem;color:var(--gray)">Prix direct producteur</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STATS ===================== -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-card" data-reveal>
+        <div class="stat-icon" style="background:var(--green-pale);color:var(--green)">
+          <i class="fas fa-tractor"></i>
+        </div>
+        <h3 id="statProducers">0</h3>
+        <p>Producteurs Actifs</p>
+        <small style="color:var(--gray);font-size:.72rem;margin-top:.25rem;display:block" id="statProducersNote">Rejoignez-nous !</small>
+      </div>
+      <div class="stat-card" data-reveal data-reveal-delay="100">
+        <div class="stat-icon" style="background:#FEF3C7;color:#92400E">
+          <i class="fas fa-utensils"></i>
+        </div>
+        <h3 id="statConsumers">0</h3>
+        <p>Restaurateurs Inscrits</p>
+        <small style="color:var(--gray);font-size:.72rem;margin-top:.25rem;display:block" id="statConsumersNote">Inscrivez-vous gratuitement</small>
+      </div>
+      <div class="stat-card" data-reveal data-reveal-delay="200">
+        <div class="stat-icon" style="background:#DBEAFE;color:var(--blue)">
+          <i class="fas fa-weight-hanging"></i>
+        </div>
+        <h3 id="statTonnes">0</h3>
+        <p>Tonnes Échangées</p>
+        <small style="color:var(--gray);font-size:.72rem;margin-top:.25rem;display:block" id="statTonnesNote">Croît avec chaque commande</small>
+      </div>
+      <div class="stat-card" data-reveal data-reveal-delay="300">
+        <div class="stat-icon" style="background:#EDE9FE;color:#7C3AED">
+          <i class="fas fa-box-open"></i>
+        </div>
+        <h3 id="statProducts">0</h3>
+        <p>Produits Disponibles</p>
+        <small style="color:var(--gray);font-size:.72rem;margin-top:.25rem;display:block" id="statProductsNote">Catalogue en cours</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== À PROPOS ===================== -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <span class="section-tag">Notre Mission</span>
+      <h2>Résoudre le Paradoxe Alimentaire Sénégalais</h2>
+      <p>Des légumes pourrissent dans les Niayes pendant que les restaurants de Dakar paient des prix exorbitants. SMART-LOUMA met fin à ce paradoxe.</p>
+    </div>
+
+    <div class="about-grid">
+      <div data-reveal>
+        <h3 class="mb-2">Le Problème</h3>
+        <p style="color:var(--gray);margin-bottom:1rem">Au Sénégal, la chaîne alimentaire génère pertes et injustices pour tous les acteurs.</p>
+        <ul class="problem-list">
+          <li>
+            <div class="prob-icon" style="background:#FEE2E2;color:var(--red)"><i class="fas fa-trash"></i></div>
+            <div>
+              <strong>Gaspillage Alimentaire</strong>
+              <p style="font-size:.85rem;color:var(--gray);margin-top:.2rem">Jusqu'à 30% des récoltes perdues faute de débouchés rapides.</p>
+            </div>
+          </li>
+          <li>
+            <div class="prob-icon" style="background:#FEF3C7;color:#92400E"><i class="fas fa-money-bill-wave"></i></div>
+            <div>
+              <strong>Prix Inflés par les Intermédiaires</strong>
+              <p style="font-size:.85rem;color:var(--gray);margin-top:.2rem">Jusqu'à 200% de marge captée avant d'atteindre le restaurateur.</p>
+            </div>
+          </li>
+          <li>
+            <div class="prob-icon" style="background:#DBEAFE;color:var(--blue)"><i class="fas fa-clock"></i></div>
+            <div>
+              <strong>Logistique Inefficace</strong>
+              <p style="font-size:.85rem;color:var(--gray);margin-top:.2rem">Chaîne d'approvisionnement longue, peu fiable et peu transparente.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div data-reveal data-reveal-delay="200">
+        <h3 class="mb-2">Notre Solution</h3>
+        <p style="color:var(--gray);margin-bottom:1.5rem">SMART-LOUMA crée un pont numérique direct entre le champ et l'assiette.</p>
+        <div class="solution-cards">
+          <div class="sol-card">
+            <i class="fas fa-mobile-alt" style="color:var(--green)"></i>
+            <h5>Marketplace B2B</h5>
+            <p>Commandez directement auprès des producteurs, sans intermédiaire.</p>
+          </div>
+          <div class="sol-card">
+            <i class="fas fa-chart-line" style="color:var(--amber)"></i>
+            <h5>Prédiction IA</h5>
+            <p>Anticipez la demande et optimisez vos plantations avec des données.</p>
+          </div>
+          <div class="sol-card">
+            <i class="fas fa-truck" style="color:var(--blue)"></i>
+            <h5>Logistique Groupée</h5>
+            <p>Livraison le lendemain matin avec traçabilité complète.</p>
+          </div>
+          <div class="sol-card">
+            <i class="fas fa-database" style="color:#7C3AED"></i>
+            <h5>Analytics Temps Réel</h5>
+            <p>Pilotez votre activité avec des tableaux de bord intelligents.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRÉDICTION IA ===================== -->
+<section id="ia-prediction" style="padding:6rem 0;background:var(--white)">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <span class="section-tag">Intelligence Artificielle</span>
+      <h2>Prédiction IA & Analytics</h2>
+      <p>SMART-LOUMA intègre l'intelligence artificielle pour anticiper la demande, optimiser les plantations et réduire le gaspillage à la source.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center" data-reveal>
+
+      <!-- Visuel IA animé -->
+      <div style="position:relative">
+        <div style="background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 60%,var(--green-mid) 100%);border-radius:24px;padding:2.5rem;color:#fff;box-shadow:var(--shadow-lg)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+            <div>
+              <p style="font-size:.8rem;opacity:.7;margin-bottom:.25rem">🤖 Analyse en cours</p>
+              <h4 style="font-size:1.1rem">Prévisions de demande</h4>
+            </div>
+            <div style="background:rgba(116,198,157,.2);border:1px solid rgba(116,198,157,.4);padding:.4rem .9rem;border-radius:50px;font-size:.75rem;color:var(--green-light)">
+              <i class="fas fa-circle" style="font-size:.5rem;animation:ping 1.5s infinite"></i> Actif
+            </div>
+          </div>
+
+          <!-- Mini graphique simulé -->
+          <div style="background:rgba(255,255,255,.08);border-radius:12px;padding:1.25rem;margin-bottom:1rem">
+            <p style="font-size:.78rem;opacity:.65;margin-bottom:.75rem">Semaine prochaine — Demande estimée</p>
+            <div style="display:flex;align-items:flex-end;gap:.4rem;height:80px">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+                <div style="width:100%;background:rgba(116,198,157,.6);border-radius:4px 4px 0 0;height:55px"></div>
+                <span style="font-size:.65rem;opacity:.7">Lun</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+                <div style="width:100%;background:rgba(116,198,157,.8);border-radius:4px 4px 0 0;height:70px"></div>
+                <span style="font-size:.65rem;opacity:.7">Mar</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+                <div style="width:100%;background:var(--green-light);border-radius:4px 4px 0 0;height:45px"></div>
+                <span style="font-size:.65rem;opacity:.7">Mer</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+                <div style="width:100%;background:var(--amber-light);border-radius:4px 4px 0 0;height:80px"></div>
+                <span style="font-size:.65rem;opacity:.7">Jeu</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+                <div style="width:100%;background:rgba(116,198,157,.5);border-radius:4px 4px 0 0;height:60px"></div>
+                <span style="font-size:.65rem;opacity:.7">Ven</span>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem">
+                <div style="width:100%;background:rgba(233,130,12,.7);border-radius:4px 4px 0 0;height:75px"></div>
+                <span style="font-size:.65rem;opacity:.7">Sam</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alertes IA -->
+          <div style="display:flex;flex-direction:column;gap:.6rem">
+            <div style="background:rgba(255,255,255,.1);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:.6rem;font-size:.82rem">
+              <span style="font-size:1rem">📈</span>
+              <div><strong>Tomates</strong> — forte demande jeudi (+42%)</div>
+            </div>
+            <div style="background:rgba(233,130,12,.15);border:1px solid rgba(233,130,12,.3);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:.6rem;font-size:.82rem">
+              <span style="font-size:1rem">⚠️</span>
+              <div><strong>Oignons</strong> — stock insuffisant anticipé samedi</div>
+            </div>
+            <div style="background:rgba(116,198,157,.12);border-radius:10px;padding:.75rem 1rem;display:flex;align-items:center;gap:.6rem;font-size:.82rem">
+              <span style="font-size:1rem">💡</span>
+              <div>Recommande : planter <strong>+30% de carottes</strong> ce cycle</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badge flottant -->
+        <div style="position:absolute;top:-1rem;right:-1rem;background:var(--amber);color:#fff;border-radius:50px;padding:.45rem 1rem;font-size:.78rem;font-weight:700;box-shadow:var(--shadow)">
+          🧠 IA SMART-LOUMA
+        </div>
+      </div>
+
+      <!-- Contenu texte -->
+      <div>
+        <h3 style="font-size:1.7rem;margin-bottom:1rem">L'IA au service de l'agriculture sénégalaise</h3>
+        <p style="color:var(--gray);margin-bottom:2rem">Notre système analyse les données historiques, les tendances du marché et les conditions saisonnières pour offrir des prédictions précises aux producteurs et restaurateurs.</p>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+          <div style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:44px;height:44px;border-radius:12px;background:var(--green-pale);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div>
+              <h5 style="margin-bottom:.3rem">Prévision de la demande</h5>
+              <p style="color:var(--gray);font-size:.88rem">Anticipe les besoins des restaurateurs 7 jours à l'avance pour éviter les ruptures de stock.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:44px;height:44px;border-radius:12px;background:#FEF3C7;color:#92400E;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">
+              <i class="fas fa-seedling"></i>
+            </div>
+            <div>
+              <h5 style="margin-bottom:.3rem">Optimisation des plantations</h5>
+              <p style="color:var(--gray);font-size:.88rem">Recommande quoi planter et en quelle quantité selon la demande prévue du marché.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:44px;height:44px;border-radius:12px;background:#DBEAFE;color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">
+              <i class="fas fa-bell"></i>
+            </div>
+            <div>
+              <h5 style="margin-bottom:.3rem">Alertes intelligentes</h5>
+              <p style="color:var(--gray);font-size:.88rem">Notifications automatiques sur les stocks critiques, prix anormaux ou opportunités de marché.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start">
+            <div style="width:44px;height:44px;border-radius:12px;background:#EDE9FE;color:#7C3AED;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">
+              <i class="fas fa-recycle"></i>
+            </div>
+            <div>
+              <h5 style="margin-bottom:.3rem">Réduction du gaspillage</h5>
+              <p style="color:var(--gray);font-size:.88rem">En alignant production et demande, l'IA réduit les pertes post-récolte jusqu'à 40%.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="#marketplace" class="btn btn-primary btn-lg">
+            <i class="fas fa-store"></i> Voir la marketplace
+          </a>
+          <a href="#contact" class="btn btn-outline btn-lg">
+            <i class="fas fa-envelope"></i> Partenariat IA
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GALERIE ===================== -->
+<section class="gallery-section" id="gallery">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <span class="section-tag">Galerie</span>
+      <h2>L'Univers SMART-LOUMA</h2>
+      <p>Du champ à la table, découvrez notre écosystème agricole en images.</p>
+    </div>
+
+    <div data-reveal data-reveal-delay="100">
+      <div class="slider-outer">
+        <button class="slider-nav-btn" id="sliderPrev"><i class="fas fa-chevron-left"></i></button>
+        <div class="slider-track">
+          <div class="slide">
+            <img src="https://images.unsplash.com/photo-1597362925123-77861d3fbac7?auto=format&fit=crop&w=1400&q=80" alt="Légumes frais">
+            <div class="slide-caption"><h4>Légumes Frais des Niayes</h4><p>Récoltés le matin même pour une fraîcheur maximale</p></div>
+          </div>
+          <div class="slide">
+            <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1400&q=80" alt="Producteurs">
+            <div class="slide-caption"><h4>Nos Producteurs Engagés</h4><p>Des agriculteurs passionnés qui cultivent avec soin</p></div>
+          </div>
+          <div class="slide">
+            <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1400&q=80" alt="Marché">
+            <div class="slide-caption"><h4>Marché Digital Dynamique</h4><p>Notre plateforme réinvente le marché traditionnel</p></div>
+          </div>
+          <div class="slide">
+            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=80" alt="Restaurants">
+            <div class="slide-caption"><h4>Restaurants Partenaires</h4><p>Des chefs qui valorisent les produits locaux et frais</p></div>
+          </div>
+          <div class="slide">
+            <img src="https://images.unsplash.com/photo-1579113800032-c38bd7635818?auto=format&fit=crop&w=1400&q=80" alt="Livraison">
+            <div class="slide-caption"><h4>Livraison Express</h4><p>Service fiable pour une fraîcheur garantie chaque matin</p></div>
+          </div>
+        </div>
+        <button class="slider-nav-btn" id="sliderNext"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MARKETPLACE ===================== -->
+<section class="marketplace-section" id="marketplace">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <span class="section-tag">Marketplace B2B</span>
+      <h2>Commandez Directement Chez le Producteur</h2>
+      <p>Des légumes et fruits frais, livrés le lendemain matin à votre restaurant.</p>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-bar" data-reveal>
+      <div class="search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Rechercher un produit, producteur…">
+      </div>
+      <select class="filter-select" id="zoneFilter">
+        <option value="">Toutes les zones</option>
+        <option value="Niayes">Zone Niayes</option>
+        <option value="Dakar">Dakar</option>
+        <option value="Thiès">Thiès</option>
+        <option value="Saint-Louis">Saint-Louis</option>
+        <option value="Kaolack">Kaolack</option>
+      </select>
+      <select class="filter-select" id="categoryFilter">
+        <option value="">Toutes catégories</option>
+        <option value="Légumes">Légumes</option>
+        <option value="Fruits">Fruits</option>
+        <option value="Tubercules">Tubercules</option>
+        <option value="Herbes">Herbes</option>
+      </select>
+    </div>
+
+    <!-- Filtres par lettre -->
+    <div class="letter-filters" id="letterFilters" data-reveal></div>
+
+    <!-- Grille produits -->
+    <div class="products-grid" id="productsGrid"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+  </div>
+</section>
+
+<!-- ===================== ESPACE PRODUCTEUR (réservé) ===================== -->
+<section class="producer-section" id="producer" style="display:none">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <span class="section-tag">Espace Producteur</span>
+      <h2>Gérez Votre Activité Agricole</h2>
+      <p>Espace réservé aux producteurs approuvés et à l'administrateur.</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-row" data-reveal>
+      <div class="kpi-card">
+        <h3 id="kpiCount">0</h3>
+        <p>Produits en catalogue</p>
+      </div>
+      <div class="kpi-card amber">
+        <h3 id="kpiQty">0 kg</h3>
+        <p>Stock total disponible</p>
+      </div>
+      <div class="kpi-card blue">
+        <h3 id="kpiVal">0 F</h3>
+        <p>Valeur estimée du stock</p>
+      </div>
+    </div>
+
+    <div class="producer-grid">
+      <!-- Graphique + stats -->
+      <div data-reveal>
+        <div class="dashboard-card">
+          <h4><i class="fas fa-chart-bar" style="color:var(--green);margin-right:.5rem"></i>Tableau de Bord — Ventes</h4>
+          <canvas id="salesChart" style="max-height:260px"></canvas>
+          <p id="chartNote" style="text-align:center;font-size:.8rem;color:var(--gray);margin-top:.75rem;padding:.75rem;background:var(--cream);border-radius:var(--radius)"></p>
+        </div>
+
+        <!-- Notifications dynamiques -->
+        <div class="dashboard-card" style="margin-top:1.5rem">
+          <h4><i class="fas fa-bell" style="color:var(--amber);margin-right:.5rem"></i>Activité & Alertes</h4>
+          <ul class="notif-list" id="producerNotifs">
+            <li class="notif-item">
+              <div class="notif-dot" style="background:var(--green)"></div>
+              <span><strong>Bienvenue !</strong> Ajoutez vos premiers produits pour qu'ils apparaissent dans la marketplace.</span>
+            </li>
+            <li class="notif-item">
+              <div class="notif-dot" style="background:var(--blue)"></div>
+              <span>Chaque produit ajouté est immédiatement visible pour les restaurateurs de Dakar.</span>
+            </li>
+            <li class="notif-item">
+              <div class="notif-dot" style="background:var(--amber)"></div>
+              <span>Limite : 50 kg maximum par produit pour équilibrer l'offre sur le marché.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CRUD Produits -->
+      <div data-reveal data-reveal-delay="200">
+        <!-- Formulaire ajout -->
+        <div class="dashboard-card" style="margin-bottom:1.5rem">
+          <h4><i class="fas fa-plus-circle" style="color:var(--green);margin-right:.5rem"></i>Ajouter un Produit</h4>
+          <form id="addProductForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nom du produit *</label>
+                <input type="text" class="form-control" id="pName" name="name" placeholder="Ex: Carottes, Tomates…" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Catégorie *</label>
+                <select class="form-select" id="pCategory" name="category" required>
+                  <option value="">Choisir…</option>
+                  <option value="Légumes">Légumes</option>
+                  <option value="Fruits">Fruits</option>
+                  <option value="Tubercules">Tubercules</option>
+                  <option value="Herbes">Herbes aromatiques</option>
+                  <option value="Épices">Épices</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Quantité (kg, max 50) *</label>
+                <input type="number" class="form-control" id="pQty" name="qty" min="1" max="50" required>
+                <p class="form-hint">50 kg max pour équilibrer le marché</p>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Prix / kg (FCFA) *</label>
+                <input type="number" class="form-control" id="pPrice" name="price" min="100" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Zone de production *</label>
+                <select class="form-select" id="pZone" name="zone" required>
+                  <option value="Niayes">Zone des Niayes</option>
+                  <option value="Dakar">Dakar</option>
+                  <option value="Thiès">Thiès</option>
+                  <option value="Saint-Louis">Saint-Louis</option>
+                  <option value="Kaolack">Kaolack</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date de récolte *</label>
+                <input type="date" class="form-control" id="pHarvest" name="harvest" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description (optionnelle)</label>
+              <textarea class="form-textarea" id="pDesc" name="desc" placeholder="Décrivez votre produit, méthode de culture, qualité…"></textarea>
+            </div>
+            <!-- Upload photo -->
+            <div class="form-group">
+              <label class="form-label">Photo du produit (optionnelle)</label>
+              <input type="file" class="form-control" id="pImageFile" name="image" accept="image/*" onchange="previewProductImage(this)">
+              <p class="form-hint">Si vide, une photo sera choisie automatiquement selon le nom du produit</p>
+              <img id="pImagePreview" src="" alt="Aperçu" style="display:none;width:100%;height:140px;object-fit:cover;border-radius:var(--radius);margin-top:.5rem">
+            </div>
+            <button type="submit" class="btn btn-primary w-full">
+              <i class="fas fa-plus-circle"></i> Ajouter au catalogue
+            </button>
+          </form>
+        </div>
+
+        <!-- Table produits -->
+        <div class="dashboard-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+            <h4 style="margin:0">Mes Produits en Stock</h4>
+            <span style="background:var(--green-pale);color:var(--green);font-size:.78rem;font-weight:700;padding:.3rem .8rem;border-radius:50px" id="producerCount">0 produit</span>
+          </div>
+          <div class="producer-table-wrap">
+            <table class="producer-table">
+              <thead>
+                <tr>
+                  <th>Photo</th><th>Nom</th><th>Catégorie</th><th>Qté</th><th>Prix</th><th>Zone</th><th>Disponible</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="producerTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="section-header" data-reveal>
+      <span class="section-tag">Contact</span>
+      <h2>Contactez-Nous</h2>
+      <p>Nous sommes disponibles pour toute question, partenariat ou inscription.</p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- Infos -->
+      <div data-reveal>
+        <h3>Parlons de votre projet</h3>
+        <p style="color:var(--gray);margin-bottom:1.5rem">Que vous soyez producteur, restaurateur ou distributeur, rejoignez l'écosystème SMART-LOUMA.</p>
+
+        <ul class="contact-info-list">
+          <li>
+            <div class="ci-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div><strong>Adresse</strong><br><span style="color:var(--gray);font-size:.9rem">Dakar, Zone des Niayes, Sénégal</span></div>
+          </li>
+          <li>
+            <div class="ci-icon"><i class="fas fa-phone"></i></div>
+            <div><strong>Téléphone</strong><br><span style="color:var(--gray);font-size:.9rem">+221 77 362 45 39</span></div>
+          </li>
+          <li>
+            <div class="ci-icon"><i class="fas fa-envelope"></i></div>
+            <div><strong>Email</strong><br><span style="color:var(--gray);font-size:.9rem"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="75161a1b0114160135061814070158191a0018145b061b">seydoubakhayokho1@gmail.com</a></span></div>
+          </li>
+          <li>
+            <div class="ci-icon"><i class="fas fa-clock"></i></div>
+            <div><strong>Horaires</strong><br><span style="color:var(--gray);font-size:.9rem">Lun–Sam : 7h00 – 19h00</span></div>
+          </li>
+        </ul>
+
+        <div class="whatsapp-btns mt-2">
+          <a href="https://wa.me/221773624539?text=Bonjour,%20je%20suis%20restaurateur%20et%20je%20veux%20commander" class="btn btn-wa btn-lg" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> WhatsApp Restaurateurs
+          </a>
+          <a href="https://wa.me/221773624539?text=Bonjour,%20je%20suis%20producteur%20et%20veux%20vendre" class="btn btn-wa btn-lg" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i> WhatsApp Producteurs
+          </a>
+        </div>
+      </div>
+
+      <!-- Formulaire -->
+      <div data-reveal data-reveal-delay="200">
+        <div class="contact-form-card">
+          <h3>Envoyez un message</h3>
+          <form id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nom complet *</label>
+                <input type="text" class="form-control" name="name" placeholder="Votre nom" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email *</label>
+                <input type="email" class="form-control" name="email" placeholder="votre@email.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Sujet *</label>
+              <select class="form-select" name="subject" required>
+                <option value="">Sélectionner un sujet</option>
+                <option>Devenir restaurateur partenaire</option>
+                <option>Devenir producteur partenaire</option>
+                <option>Support technique</option>
+                <option>Partenariat / Investissement</option>
+                <option>Autre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Message *</label>
+              <textarea class="form-textarea" name="message" placeholder="Décrivez votre besoin…" style="min-height:130px" required></textarea>
+            </div>
+            <div class="form-group checkbox-row">
+              <input type="checkbox" id="acceptPolicy" required>
+              <label for="acceptPolicy">J'accepte la <a href="#" style="color:var(--green)">politique de confidentialité</a></label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-full">
+              <i class="fas fa-paper-plane"></i> Envoyer le message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem">
+          <div class="logo-badge">SL</div>
+          <h3>SMART-LOUMA</h3>
+        </div>
+        <p>Plateforme B2B intelligente qui connecte directement les producteurs des Niayes aux restaurateurs de Dakar. Réduisez le gaspillage, optimisez vos achats.</p>
+        <div class="social-links">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5>Navigation</h5>
+        <ul class="footer-links">
+          <li><a href="#home">Accueil</a></li>
+          <li><a href="#about">À propos</a></li>
+          <li><a href="#gallery">Galerie</a></li>
+          <li><a href="#marketplace">Marketplace</a></li>
+          <li><a href="#producer">Espace Producteur</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Services</h5>
+        <ul class="footer-links">
+          <li><a href="#marketplace"><i class="fas fa-store" style="font-size:.7rem;margin-right:.4rem;opacity:.6"></i>Marketplace B2B</a></li>
+          <li><a href="#ia-prediction"><i class="fas fa-brain" style="font-size:.7rem;margin-right:.4rem;opacity:.6"></i>Prédiction IA</a></li>
+          <li><a href="#producer"><i class="fas fa-boxes" style="font-size:.7rem;margin-right:.4rem;opacity:.6"></i>Gestion de Stock</a></li>
+          <li><a href="#producer"><i class="fas fa-chart-line" style="font-size:.7rem;margin-right:.4rem;opacity:.6"></i>Analytics Avancés</a></li>
+          <li><a href="#contact"><i class="fas fa-truck" style="font-size:.7rem;margin-right:.4rem;opacity:.6"></i>Logistique Groupée</a></li>
+          <li><a href="#contact"><i class="fas fa-headset" style="font-size:.7rem;margin-right:.4rem;opacity:.6"></i>Support Agricole</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <ul class="footer-links">
+          <li><i class="fas fa-map-marker-alt" style="color:var(--green-light);margin-right:.5rem"></i> Dakar, Sénégal</li>
+          <li><i class="fas fa-phone" style="color:var(--green-light);margin-right:.5rem"></i> +221 77 362 45 39</li>
+          <li><i class="fas fa-envelope" style="color:var(--green-light);margin-right:.5rem"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7c1f1312081d1f083c0f111d0e0851101309111d520f12">seydoubakhayokho1@gmail.com</a></li>
+          <li style="margin-top:1.25rem">
+            <a href="https://wa.me/221773624539" class="btn btn-wa btn-sm" target="_blank">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2025 SMART-LOUMA. Tous droits réservés.</span>
+      <span>Développé avec l'equipe genie boost pour les agriculteurs sénégalais</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== CHATBOT ===================== -->
+<div class="chatbot-wrap">
+  <button class="chatbot-toggle" id="chatbotToggle" aria-label="Chatbot">
+    <i class="fas fa-comment-dots"></i>
+    <div class="chatbot-ping"></div>
+  </button>
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-head">
+      <div>
+        <h5>🌿 Assistant SMART-LOUMA</h5>
+        <small style="opacity:.75">En ligne — répond en quelques secondes</small>
+      </div>
+      <button class="chatbot-close" id="chatbotClose"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chatbot-messages" id="chatMessages"></div>
+    <div class="chatbot-input-row">
+      <input type="text" id="chatInput" placeholder="Posez votre question…">
+      <button class="chatbot-send" id="chatSend"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODALES ===================== -->
+
+<!-- MODAL AUTH -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Mon Compte</h3>
+      <button class="modal-close" data-modal="authModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="login">Connexion</button>
+        <button class="tab-btn" data-tab="register">S'inscrire</button>
+      </div>
+
+      <div class="tab-pane active" id="tab_login">
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" placeholder="votre@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mot de passe</label>
+            <input type="password" class="form-control" name="password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-full mt-2">
+            <i class="fas fa-sign-in-alt"></i> Se connecter
+          </button>
+        </form>
+      </div>
+
+      <div class="tab-pane" id="tab_register">
+        <form id="registerForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Prénom & Nom *</label>
+              <input type="text" class="form-control" name="name" placeholder="Moussa Diallo" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Téléphone *</label>
+              <input type="tel" class="form-control" name="phone" placeholder="+221 77 …" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input type="email" class="form-control" name="email" placeholder="votre@email.com" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Mot de passe *</label>
+              <input type="password" class="form-control" name="password" placeholder="••••••••" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmer mot de passe *</label>
+              <input type="password" class="form-control" name="password2" placeholder="••••••••" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Je suis *</label>
+            <select class="form-select" name="userType" required onchange="toggleProducerFields(this.value)">
+              <option value="">Sélectionner</option>
+              <option value="consumer">Restaurateur / Hôtel</option>
+              <option value="producer">Producteur Agricole</option>
+            </select>
+          </div>
+          <div id="producerFields" style="display:none">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nom de l'exploitation</label>
+                <input type="text" class="form-control" name="company" placeholder="Ferme Bio Niayes">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Zone principale</label>
+                <select class="form-select" name="zone">
+                  <option value="Niayes">Zone des Niayes</option>
+                  <option value="Dakar">Dakar</option>
+                  <option value="Thiès">Thiès</option>
+                  <option value="Saint-Louis">Saint-Louis</option>
+                  <option value="Kaolack">Kaolack</option>
+                </select>
+              </div>
+            </div>
+            <div style="background:#FEF3C7;border-radius:var(--radius);padding:.9rem;font-size:.82rem;margin-bottom:1rem;border-left:3px solid var(--amber)">
+              <i class="fas fa-info-circle" style="color:var(--amber)"></i> En tant que producteur, votre compte devra être <strong>approuvé par l'administrateur</strong> avant que vous puissiez ajouter des produits.
+            </div>
+          </div>
+          <div class="form-group checkbox-row">
+            <input type="checkbox" id="acceptTerms" required>
+            <label for="acceptTerms">J'accepte les <a href="#" style="color:var(--green)">conditions d'utilisation</a></label>
+          </div>
+          <button type="submit" class="btn btn-primary w-full">
+            <i class="fas fa-user-plus"></i> Créer mon compte
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PANIER -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal-box lg">
+    <div class="modal-header">
+      <h3><i class="fas fa-shopping-cart" style="color:var(--green);margin-right:.5rem"></i>Mon Panier B2B</h3>
+      <button class="modal-close" data-modal="cartModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="cartBody"></div>
+      <div id="cartSummary"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('cartModal')">Continuer les achats</button>
+      <button class="btn btn-primary" id="checkoutBtn">
+        <i class="fas fa-check"></i> Valider la commande
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DÉTAIL PRODUIT -->
+<div class="modal-overlay" id="productDetailModal">
+  <div class="modal-box lg">
+    <div class="modal-header">
+      <h3 id="detailTitle">Détail produit</h3>
+      <button class="modal-close" data-modal="productDetailModal"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="product-detail-grid">
+        <img id="detailImg" src="" alt="" style="border-radius:var(--radius);height:300px;object-fit:cover;width:100%">
+        <div class="detail-info">
+          <div class="detail-badges">
+            <span class="badge badge-green" id="detailCategory"></span>
+            <span class="badge badge-amber" id="detailZone"></span>
+          </div>
+          <p id="detailDesc" style="color:var(--gray);font-size:.9rem;margin-bottom:1rem"></p>
+          <p class="detail-price" id="detailPrice"></p>
+          <ul class="detail-meta">
+            <li><span>Disponibilité</span><strong id="detailQty"></strong></li>
+            <li><span>Date de récolte</span><strong id="detailHarvest"></strong></li>
+            <li><span>Producteur</span><strong id="detailProducer"></strong></li>
+            <li><span>Note qualité</span><strong id="detailRating"></strong></li>
+          </ul>
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+            <button class="qty-btn" onclick="document.getElementById('detailQtyInput').stepDown()">−</button>
+            <input type="number" id="detailQtyInput" min="1" max="50" value="1"
+                   style="width:80px;text-align:center;border:2px solid var(--cream-dark);border-radius:var(--radius);padding:.5rem;font-size:1rem;font-family:'DM Sans',sans-serif">
+            <button class="qty-btn" onclick="document.getElementById('detailQtyInput').stepUp()">+</button>
+            <span style="color:var(--gray);font-size:.88rem">kg</span>
+          </div>
+          <button class="btn btn-primary btn-lg w-full" id="addToCartFromDetail">
+            <i class="fas fa-cart-plus"></i> Ajouter au panier
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOAST CONTAINER ===================== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script src="frontend-db.js"></script>
+<script>
+function toggleProducerFields(role) {
+  document.getElementById("producerFields").style.display = role === "producer" ? "block" : "none";
+}
+function previewProductImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById("pImagePreview");
+    img.src = e.target.result;
+    img.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+}
+
+// ══════════════════════════════════════════════
+//  STATS DYNAMIQUES — lecture depuis DB
+// ══════════════════════════════════════════════
+function animateCounter(el, endVal, suffix) {
+  if (!el) return;
+  const dur   = 1200;
+  const start = performance.now();
+  const from  = 0;
+  function step(ts) {
+    const p = Math.min((ts - start) / dur, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const cur = Math.round(from + (endVal - from) * eased);
+    el.textContent = cur + (suffix || "");
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function updateLiveStats() {
+  const stats = DB.getStats();
+
+  // ── Producteurs actifs ──
+  const prod = stats.totalProducers;
+  const prodEl = document.getElementById("statProducers");
+  const prodNote = document.getElementById("statProducersNote");
+  if (prodEl) animateCounter(prodEl, prod, "");
+  if (prodNote) prodNote.textContent = prod === 0 ? "Soyez le premier !" : prod + " producteur" + (prod > 1 ? "s" : "") + " approuvé" + (prod > 1 ? "s" : "");
+
+  // ── Restaurateurs inscrits ──
+  const cons = stats.totalConsumers;
+  const consEl = document.getElementById("statConsumers");
+  const consNote = document.getElementById("statConsumersNote");
+  if (consEl) animateCounter(consEl, cons, "");
+  if (consNote) consNote.textContent = cons === 0 ? "Inscrivez-vous gratuitement" : cons + " restaurateur" + (cons > 1 ? "s" : "") + " inscrit" + (cons > 1 ? "s" : "");
+
+  // ── Tonnes (kg totaux → convertis en tonnes) ──
+  const kg = stats.totalQtySold;
+  const tonnes = kg >= 1000 ? (kg / 1000).toFixed(1) : kg;
+  const tonnesSuffix = kg >= 1000 ? " t" : " kg";
+  const tonnesEl = document.getElementById("statTonnes");
+  const tonnesNote = document.getElementById("statTonnesNote");
+  if (tonnesEl) {
+    if (kg === 0) { tonnesEl.textContent = "0"; }
+    else animateCounter(tonnesEl, kg >= 1000 ? parseFloat((kg/1000).toFixed(1)) : kg, tonnesSuffix);
+  }
+  if (tonnesNote) tonnesNote.textContent = kg === 0 ? "Croît avec chaque commande" : kg + " kg échangés au total";
+
+  // ── Produits disponibles ──
+  const prods = stats.availableProducts;
+  const prodsEl = document.getElementById("statProducts");
+  const prodsNote = document.getElementById("statProductsNote");
+  if (prodsEl) animateCounter(prodsEl, prods, "");
+  if (prodsNote) prodsNote.textContent = prods === 0 ? "Catalogue en cours" : prods + " produit" + (prods > 1 ? "s" : "") + " en ligne";
+
+  // ── Hero stats ──
+  const heroP = document.getElementById("heroProducers");
+  const heroC = document.getElementById("heroConsumers");
+  const heroT = document.getElementById("heroTonnes");
+  if (heroP) heroP.textContent = prod;
+  if (heroC) heroC.textContent = cons;
+  if (heroT) heroT.textContent = kg === 0 ? "0 kg" : (kg >= 1000 ? (kg/1000).toFixed(1) + "t" : kg + " kg");
+}
+
+// updateLiveStats appelé depuis main.js après loadAllData()
+</script>
+<script src="main.js"></script>
+</body>
+</html>
