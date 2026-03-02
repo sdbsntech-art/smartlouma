@@ -20,7 +20,7 @@ return [
     // ── Config spécifique SMART-LOUMA ──────────────────────────
     'admin_email'    => env('ADMIN_EMAIL', 'seydoubakhayokho1@gmail.com'),
     'admin_name'     => env('ADMIN_NAME', 'Seydou Bakhay Okho'),
-    'admin_password' => env('ADMIN_PASSWORD', 'louma'),
+    'admin_password' => env('ADMIN_PASSWORD', 'loumalouma'),
 
     'providers' => [
         Illuminate\Auth\AuthServiceProvider::class,
