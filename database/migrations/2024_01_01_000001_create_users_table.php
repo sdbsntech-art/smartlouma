@@ -8,41 +8,50 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->string('phone')->nullable();
-            $table->enum('role', ['admin', 'producer', 'consumer'])->default('consumer');
-            $table->enum('status', ['active', 'pending', 'suspended'])->default('active');
-            $table->string('company')->nullable();
-            $table->string('zone')->nullable();
-            $table->timestamp('approved_at')->nullable();
-            $table->string('remember_token', 100)->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
+        // Cette migration complète la table "users" déjà créée
+        Schema::table('users', function (Blueprint $table) {
+            if (!Schema::hasColumn('users', 'phone')) {
+                $table->string('phone')->nullable()->after('password');
+            }
+            if (!Schema::hasColumn('users', 'role')) {
+                $table->enum('role', ['admin', 'producer', 'consumer'])->default('consumer')->after('phone');
+            }
+            if (!Schema::hasColumn('users', 'status')) {
+                $table->enum('status', ['active', 'pending', 'suspended'])->default('active')->after('role');
+            }
+            if (!Schema::hasColumn('users', 'company')) {
+                $table->string('company')->nullable()->after('status');
+            }
+            if (!Schema::hasColumn('users', 'zone')) {
+                $table->string('zone')->nullable()->after('company');
+            }
+            if (!Schema::hasColumn('users', 'approved_at')) {
+                $table->timestamp('approved_at')->nullable()->after('zone');
+            }
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        Schema::table('users', function (Blueprint $table) {
+            if (Schema::hasColumn('users', 'approved_at')) {
+                $table->dropColumn('approved_at');
+            }
+            if (Schema::hasColumn('users', 'zone')) {
+                $table->dropColumn('zone');
+            }
+            if (Schema::hasColumn('users', 'company')) {
+                $table->dropColumn('company');
+            }
+            if (Schema::hasColumn('users', 'status')) {
+                $table->dropColumn('status');
+            }
+            if (Schema::hasColumn('users', 'role')) {
+                $table->dropColumn('role');
+            }
+            if (Schema::hasColumn('users', 'phone')) {
+                $table->dropColumn('phone');
+            }
+        });
     }
 };
