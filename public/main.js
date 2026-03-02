@@ -814,13 +814,24 @@ function initContact() {
       message: this.querySelector('[name=message]').value.trim(),
     };
     try {
-      if (typeof Contact !== 'undefined' && Contact.send) {
-        await Contact.send(data);
+      // Envoi direct à Formspree (sans backend, simple et fiable)
+      const response = await fetch('https://formspree.io/f/xqapevvv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Le service de formulaire ne répond pas correctement.');
       }
+
       toast('Message envoyé !', `Merci ${data.name}, nous vous répondrons sous 24h.`, 'success');
       this.reset();
     } catch (err) {
-      toast('Erreur', err.error || err.message || 'Impossible d\'envoyer le message.', 'error');
+      toast('Erreur', err.message || 'Impossible d\'envoyer le message.', 'error');
     }
   });
 }
