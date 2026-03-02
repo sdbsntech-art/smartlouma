@@ -66,10 +66,10 @@
   <div class="nav-actions">
     <div id="userInfo" style="display:none;align-items:center;gap:.5rem"></div>
     <button class="btn btn-outline" id="loginBtn">
-      <i class="fas fa-sign-in-alt"></i> Connexion
+      <i class="fas fa-sign-in-alt"></i> <span class="btn-text">Connexion</span>
     </button>
     <button class="btn btn-primary" id="registerBtn">
-      <i class="fas fa-user-plus"></i> S'inscrire
+      <i class="fas fa-user-plus"></i> <span class="btn-text">S'inscrire</span>
     </button>
     <button class="btn-icon" id="cartBtn" style="position:relative">
       <i class="fas fa-shopping-cart"></i>
@@ -964,7 +964,7 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- ===================== SCRIPTS ===================== -->
-<script src="frontend-db.js"></script>
+<script src="db.js"></script>
 <script>
 function toggleProducerFields(role) {
   document.getElementById("producerFields").style.display = role === "producer" ? "block" : "none";
@@ -1048,7 +1048,6 @@ function updateLiveStats() {
 </script>
 
 <!-- Scripts principaux (base JS locale, sans SQLite) -->
-<script src="db.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

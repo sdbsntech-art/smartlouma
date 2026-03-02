@@ -140,8 +140,8 @@ function initUIForUser() {
             <div style="font-size:.72rem;color:var(--gray)">${roleLabel}</div>
           </div>
         </div>
-        <button class="btn btn-sm btn-outline" id="logoutBtn">Déconnexion</button>
-        ${user.role === 'admin' ? '<a href="' + (typeof USE_LARAVEL !== 'undefined' && USE_LARAVEL ? (window.location.port === '8000' ? '/admin' : 'http://localhost:8000/admin') : 'admin.html') + '" class="btn btn-sm btn-primary"><i class="fas fa-cogs"></i> Admin</a>' : ''}`;
+        <button class="btn btn-sm btn-outline" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span class="btn-text">Déconnexion</span></button>
+        ${user.role === 'admin' ? '<a href="' + (typeof USE_LARAVEL !== 'undefined' && USE_LARAVEL ? (window.location.port === '8000' ? '/admin' : 'http://localhost:8000/admin') : 'admin.html') + '" class="btn btn-sm btn-primary"><i class="fas fa-cogs"></i> <span class="btn-text">Admin</span></a>' : ''}`;
       document.getElementById('logoutBtn')?.addEventListener('click', () => {
         Auth.logout(); location.reload();
       });
@@ -219,7 +219,13 @@ function initAuthModals() {
     if (result.pending || (result.user && result.user.role === 'producer' && result.user.status === 'pending')) {
       toast('Inscription envoyée', 'Votre demande est en attente d\'approbation par l\'admin.', 'info');
     } else if (result.user) {
-      if (result.token) { Auth.currentUser = result.user; }
+      // Mode local: connecter automatiquement l'utilisateur actif
+      if (!result.token) {
+        const loginRes = await Auth.login(result.user.email, data.password);
+        if (loginRes?.user) Auth.currentUser = loginRes.user;
+      } else {
+        Auth.currentUser = result.user;
+      }
       toast('Compte créé !', `Bienvenue ${result.user.name} !`, 'success');
       await loadAllData();
       initUIForUser(); renderProducts();
