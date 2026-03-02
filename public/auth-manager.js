@@ -94,14 +94,18 @@ class AuthManager {
         body: JSON.stringify(data)
       });
       
+      // Ne pas lever d'erreur si Formspree ne répond pas correctement
+      // pour ne pas bloquer l'expérience utilisateur
       if (!response.ok) {
-        throw new Error('Erreur Formspree');
+        console.warn('Formspree response not OK:', response.status);
+        return { ok: false, status: response.status };
       }
       
       return await response.json();
     } catch (error) {
-      console.error('Erreur Formspree:', error);
-      // Ne pas bloquer l'opération si Formspree échoue
+      console.warn('Erreur Formspree (non bloquante):', error.message);
+      // Retourner un objet pour éviter les erreurs
+      return { ok: false, error: error.message };
     }
   }
 

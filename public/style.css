@@ -1051,7 +1051,20 @@ section { padding: 6rem 0; }
 .toast-msg   { font-size:.8rem;color:var(--gray); }
 
 /* ---------- Responsive Typography ---------- */
+@media(max-width:1200px) {
+  .container { max-width:1140px; }
+  .hero-container { padding:0 1.5rem; }
+}
+
+@media(max-width:1024px) {
+  .container { max-width:960px; }
+  html { font-size: 15px; }
+  .navbar { padding:0 1.5rem; }
+  .nav-links { gap:1.5rem; }
+}
+
 @media(max-width:768px) {
+  .container { max-width:720px; }
   html { font-size: 15px; }
   h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
   h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); }
@@ -1068,7 +1081,24 @@ section { padding: 6rem 0; }
   }
 }
 
+@media(max-width:640px) {
+  .container { max-width:620px; }
+  .navbar { padding:0 1rem; height:64px; }
+  .nav-links {
+    top:64px;
+    width:300px;
+    max-width:90vw;
+    padding:2rem 1.5rem;
+  }
+  .nav-actions { gap:0.5rem; }
+  .nav-actions .btn {
+    padding:0.45rem 0.9rem;
+    font-size:0.8rem;
+  }
+}
+
 @media(max-width:480px) {
+  .container { max-width:460px; }
   html { font-size: 14px; }
   h1 { font-size: clamp(1.5rem, 5vw, 2rem); }
   h2 { font-size: clamp(1.3rem, 4vw, 1.6rem); }
@@ -1077,6 +1107,25 @@ section { padding: 6rem 0; }
   .section { padding:3rem 0; }
   .card { padding:1.5rem; }
   .btn { padding:0.6rem 1.2rem; font-size:0.9rem; }
+  .navbar { padding:0 0.75rem; height:60px; }
+  .nav-links { top:60px; }
+  .nav-actions .btn { 
+    padding:0.4rem 0.8rem;
+    font-size:0.75rem;
+  }
+  .logo-text { font-size:1rem; }
+  .logo-badge { width:32px; height:32px; }
+}
+
+@media(max-width:360px) {
+  .container { max-width:340px; }
+  html { font-size: 13px; }
+  .nav-actions .btn { 
+    padding:0.35rem 0.7rem;
+    font-size:0.7rem;
+  }
+  .logo-text { font-size:0.9rem; }
+  .logo-badge { width:28px; height:28px; }
 }
 
 /* ---------- Prevent Text Overflow ---------- */
