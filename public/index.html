@@ -1044,8 +1044,25 @@ function updateLiveStats() {
   if (heroT) heroT.textContent = kg === 0 ? "0 kg" : (kg >= 1000 ? (kg/1000).toFixed(1) + "t" : kg + " kg");
 }
 
-// updateLiveStats appelé depuis main.js après loadAllData()
+// updateLiveStats appelé depuis main.js
 </script>
+
+<!-- Inclure les modales d'authentification -->
+<div id="authModalsContainer"></div>
+<script>
+  // Charger les modales d'authentification
+  fetch('auth-modals.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('authModalsContainer').innerHTML = html;
+    });
+</script>
+
+<!-- Scripts -->
+<script src="db.js"></script>
+<script src="auth-db.js"></script>
+<script src="auth-manager.js"></script>
+<script src="auth-scripts.js"></script>
 <script src="main.js"></script>
 </body>
 </html>

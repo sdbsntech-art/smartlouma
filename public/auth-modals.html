@@ -1,0 +1,300 @@
+<!-- Modales de connexion/inscription responsives -->
+<div id="authModal" class="modal" style="display: none;">
+  <div class="modal-overlay" onclick="closeAuthModal()"></div>
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeAuthModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    
+    <!-- Onglets -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">
+        <i class="fas fa-sign-in-alt"></i> Connexion
+      </button>
+      <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">
+        <i class="fas fa-user-plus"></i> Inscription
+      </button>
+    </div>
+
+    <!-- Formulaire de connexion -->
+    <div id="loginTab" class="auth-tab-content active">
+      <h3>Connexion à SMART-LOUMA</h3>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email *</label>
+          <input type="email" id="loginEmail" required placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe *</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">
+          <i class="fas fa-sign-in-alt"></i> Se connecter
+        </button>
+      </form>
+    </div>
+
+    <!-- Formulaire d'inscription -->
+    <div id="registerTab" class="auth-tab-content">
+      <h3>Inscription à SMART-LOUMA</h3>
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label for="registerName">Nom complet *</label>
+          <input type="text" id="registerName" required placeholder="Votre nom">
+        </div>
+        <div class="form-group">
+          <label for="registerEmail">Email *</label>
+          <input type="email" id="registerEmail" required placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label for="registerPhone">Téléphone</label>
+          <input type="tel" id="registerPhone" placeholder="+221 XX XXX XX XX">
+        </div>
+        <div class="form-group">
+          <label for="registerRole">Type de compte *</label>
+          <select id="registerRole" required onchange="toggleCompanyField()">
+            <option value="">Sélectionner...</option>
+            <option value="consumer">Restaurateur/Consommateur</option>
+            <option value="producer">Producteur</option>
+          </select>
+        </div>
+        <div class="form-group" id="companyField" style="display: none;">
+          <label for="registerCompany">Nom de l'entreprise</label>
+          <input type="text" id="registerCompany" placeholder="Nom de votre entreprise">
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">Mot de passe *</label>
+          <input type="password" id="registerPassword" required placeholder="••••••••" minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="registerPasswordConfirm">Confirmer le mot de passe *</label>
+          <input type="password" id="registerPasswordConfirm" required placeholder="••••••••" minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">
+          <i class="fas fa-user-plus"></i> S'inscrire
+        </button>
+      </form>
+    </div>
+
+    <div id="authMessage" class="auth-message" style="display: none;"></div>
+  </div>
+</div>
+
+<style>
+/* Modal responsif */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 1;
+}
+
+.modal-close:hover {
+  background: #e5e7eb;
+  transform: scale(1.1);
+}
+
+/* Onglets */
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+
+.auth-tab.active {
+  color: #2D6A4F;
+  border-bottom-color: #2D6A4F;
+  background: #f0fdf4;
+}
+
+.auth-tab:hover:not(.active) {
+  color: #374151;
+  background: #f9fafb;
+}
+
+/* Contenu des onglets */
+.auth-tab-content {
+  display: none;
+  padding: 0 2rem 2rem;
+}
+
+.auth-tab-content.active {
+  display: block;
+}
+
+.auth-tab-content h3 {
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2D6A4F;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+}
+
+.btn-full {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.auth-message {
+  margin: 1rem 2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.auth-message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.auth-message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal-content {
+    margin: 1rem;
+    max-height: 95vh;
+  }
+  
+  .auth-tab-content {
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  .auth-tabs {
+    flex-direction: column;
+  }
+  
+  .auth-tab {
+    border-bottom: 1px solid #e5e7eb;
+    border-right: none;
+  }
+  
+  .auth-tab.active {
+    border-bottom-color: #2D6A4F;
+    border-left: 3px solid #2D6A4F;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    margin: 0.5rem;
+  }
+  
+  .auth-tab-content {
+    padding: 0 1rem 1rem;
+  }
+  
+  .auth-tab-content h3 {
+    font-size: 1.25rem;
+  }
+  
+  .form-group input,
+  .form-group select {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9rem;
+  }
+}
+</style>
