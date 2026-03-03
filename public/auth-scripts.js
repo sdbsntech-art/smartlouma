@@ -138,19 +138,25 @@ async function handleRegister(event) {
     const result = await authManager.register(formData);
     
     if (result.success) {
-      showAuthMessage('Inscription réussie ! Bienvenue sur SMART-LOUMA', 'success');
-      setTimeout(() => {
-        closeAuthModal();
-        
-        // Redirection selon le rôle
-        if (authManager.isAdmin()) {
-          window.location.href = 'admin.html';
-        } else if (authManager.isProducer()) {
+      if (formData.role === 'producer') {
+        showAuthMessage('📋 Inscription enregistrée ! Votre compte producteur est en attente d\'approbation par l\'administrateur. Vous recevrez un email une fois approuvé.', 'success');
+        setTimeout(() => {
+          closeAuthModal();
           document.getElementById('producerNavLink')?.click();
-        } else {
-          document.getElementById('marketplace')?.scrollIntoView();
-        }
-      }, 2000);
+        }, 3000);
+      } else {
+        showAuthMessage('Inscription réussie ! Bienvenue sur SMART-LOUMA', 'success');
+        setTimeout(() => {
+          closeAuthModal();
+          
+          // Redirection selon le rôle
+          if (authManager.isAdmin()) {
+            window.location.href = 'admin.html';
+          } else {
+            document.getElementById('marketplace')?.scrollIntoView();
+          }
+        }, 2000);
+      }
     }
   } catch (error) {
     showAuthMessage(error.message, 'error');

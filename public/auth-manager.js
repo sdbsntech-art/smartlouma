@@ -26,8 +26,12 @@ class AuthManager {
         throw new Error('Cet email est déjà utilisé');
       }
 
-      // Ajouter l'utilisateur à la base locale
-      const newUser = authDB.addUser(userData);
+      // Ajouter l'utilisateur à la base locale avec statut pending pour les producteurs
+      const userWithStatus = {
+        ...userData,
+        status: userData.role === 'producer' ? 'pending' : 'active'
+      };
+      const newUser = authDB.addUser(userWithStatus);
 
       // Envoyer les données à Formspree pour sauvegarde
       await this.sendToFormspree({
@@ -37,11 +41,20 @@ class AuthManager {
         phone: userData.phone || '',
         company: userData.company || '',
         role: userData.role || 'consumer',
-        message: `Nouvelle inscription : ${userData.name} (${userData.role})`
+        status: userWithStatus.status,
+        message: `Nouvelle inscription : ${userData.name} (${userData.role}${userData.role === 'producer' ? ' - EN ATTENTE D\'APPROBATION' : ''})`
       });
 
-      // Connecter automatiquement l'utilisateur
-      this.login(userData.email, userData.password);
+      // Connecter automatiquement l'utilisateur sauf pour les producteurs qui doivent attendre l'approbation
+      if (userData.role !== 'producer') {
+        this.login(userData.email, userData.password);
+      } else {
+        // Pour les producteurs, créer une session temporaire en lecture seule
+        const tempUser = { ...newUser, pendingApproval: true };
+        this.currentUser = tempUser;
+        localStorage.setItem('currentUser', JSON.stringify(tempUser));
+        this.updateUI();
+      }
       
       return { success: true, user: newUser };
     } catch (error) {
@@ -53,6 +66,11 @@ class AuthManager {
   login(email, password) {
     const user = authDB.validateLogin(email, password);
     if (user) {
+      // Vérifier si le producteur est approuvé
+      if (user.role === 'producer' && user.status === 'pending') {
+        throw new Error('Votre compte producteur est en attente d\'approbation par l\'administrateur. Vous recevrez un email une fois approuvé.');
+      }
+      
       this.currentUser = user;
       localStorage.setItem('currentUser', JSON.stringify(user));
       this.updateUI();

@@ -1105,10 +1105,31 @@ function renderApprovalsTable() {
 }
 
 function approveProducer(id) {
+  const user = DB.getUsers().find(u => u.id === id);
+  if (!user) return;
+  
   DB.updateUser(id, { status: 'active', approvedAt: new Date().toISOString() });
   renderProducersTable();
   renderDashboard();
-  toast('Producteur approuvé', 'Le compte est maintenant actif.', 'success');
+  renderApprovalsTable();
+  
+  // Envoyer une notification d'approbation via Formspree
+  fetch('https://formspree.io/f/xqapevvv', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      action: 'producer_approved',
+      name: user.name,
+      email: user.email,
+      company: user.company || '',
+      message: `✅ COMPTE PRODUCTEUR APPROUVÉ - ${user.name} peut maintenant se connecter à SMART-LOUMA`
+    })
+  }).catch(err => console.log('Erreur notification approbation:', err));
+  
+  toast('Producteur approuvé', `${user.name} peut maintenant se connecter. Un email de notification a été envoyé.`, 'success');
 }
 
 function rejectProducer(id) {
