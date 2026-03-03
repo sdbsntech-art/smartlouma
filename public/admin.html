@@ -229,6 +229,7 @@
   <button class="sb-link" data-section="products"><i class="fas fa-box"></i> Produits</button>
   <button class="sb-link" data-section="users"><i class="fas fa-users"></i> Utilisateurs</button>
   <button class="sb-link" data-section="orders"><i class="fas fa-shopping-bag"></i> Commandes</button>
+  <button class="sb-link" data-section="approvals"><i class="fas fa-check-circle"></i> Approbations</button>
   <button class="sb-link" data-section="producers"><i class="fas fa-tractor"></i> Producteurs <span id="pendingBadge" style="display:none;background:var(--amber);color:#fff;font-size:.68rem;font-weight:700;padding:.15rem .5rem;border-radius:50px;margin-left:auto"></span></button>
 
   <div class="sb-section">Statistiques</div>
@@ -353,7 +354,26 @@
       </div>
     </div>
 
-    <!-- ===== PRODUCTEURS (approbation) ===== -->
+    <!-- ===== APPROBATIONS PRODUCTEURS (vue simple) ===== -->
+    <div class="section" id="sec-approvals">
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-check-circle" style="color:var(--amber);margin-right:.4rem"></i>Demandes d'approbation producteurs</h3>
+        </div>
+        <div class="card-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th><th>Email</th><th>Entreprise</th><th>Zone</th><th>Inscrit le</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="approvalsTableBody"><!-- injecté --></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PRODUCTEURS (détail complet) ===== -->
     <div class="section" id="sec-producers">
       <div class="tabs" id="producerTabs">
         <button class="tab active" data-ptab="pending">En attente <span id="pendingCount" style="margin-left:.25rem"></span></button>
@@ -418,6 +438,23 @@
               <input class="form-control" id="maxQty" type="number" value="50">
             </div>
             <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Enregistrer</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3><i class="fas fa-users-cog" style="color:var(--blue);margin-right:.4rem"></i>Gestion des administrateurs</h3></div>
+          <div class="card-body">
+            <p style="font-size:.85rem;color:var(--gray);margin-bottom:1rem">
+              Depuis cette plateforme, vous pouvez <strong>promouvoir</strong> ou <strong>retirer</strong> des administrateurs.
+            </p>
+            <div class="form-group">
+              <label class="form-label">Administrateurs actuels</label>
+              <div id="adminList" style="font-size:.86rem;color:var(--gray)"><!-- injecté --></div>
+            </div>
+            <p style="font-size:.8rem;color:var(--gray);margin-top:.5rem">
+              Pour ajouter un administrateur : allez dans <strong>Gestion &gt; Utilisateurs</strong>, puis cliquez sur le bouton
+              <strong>“Admin”</strong> à côté du compte concerné.
+            </p>
+            <button class="btn btn-outline" onclick="goToUsersFromSettings()"><i class="fas fa-arrow-right"></i> Ouvrir la gestion des utilisateurs</button>
           </div>
         </div>
         <div class="card" style="grid-column:1/-1">
@@ -547,7 +584,7 @@ document.querySelectorAll('.sb-link').forEach(el => el.addEventListener('click',
 // ═══════════════════════════════════════════════════════════════
 const sectionTitles = {
   dashboard:'Vue d\'ensemble', products:'Produits', users:'Utilisateurs',
-  orders:'Commandes', producers:'Producteurs', stats:'Statistiques', settings:'Paramètres'
+  orders:'Commandes', approvals:'Approbations', producers:'Producteurs', stats:'Statistiques', settings:'Paramètres'
 };
 
 document.querySelectorAll('.sb-link[data-section]').forEach(btn => {
@@ -589,6 +626,7 @@ function refreshSection(sec) {
   if (sec === 'products')   { renderProductsTable(); }
   if (sec === 'users')      { renderUsersTable(); }
   if (sec === 'orders')     { renderOrdersTable(); }
+   if (sec === 'approvals')  { renderApprovalsTable(); }
   if (sec === 'producers')  { renderProducersTable(); }
   if (sec === 'stats')      { renderStatsCharts(); }
 }
@@ -1041,6 +1079,31 @@ function renderProducersTable() {
     </tr>`).join('');
 }
 
+// Vue simple des demandes d'approbation (section "Approbations")
+function renderApprovalsTable() {
+  const pending = DB.getUsers().filter(u => u.role === 'producer' && u.status === 'pending');
+  const tbody = document.getElementById('approvalsTableBody');
+  if (!tbody) return;
+
+  if (pending.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fas fa-tractor"></i><p>Aucune demande d'approbation en attente</p><small>Les nouvelles inscriptions producteurs apparaîtront ici automatiquement.</small></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = pending.map(u => `
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.email}</td>
+      <td>${u.company || '—'}</td>
+      <td>${u.zone || '—'}</td>
+      <td>${new Date(u.createdAt).toLocaleDateString('fr-FR')}</td>
+      <td style="display:flex;gap:.35rem;flex-wrap:wrap">
+        <button class="btn btn-sm btn-primary" onclick="approveProducer('${u.id}')"><i class="fas fa-check"></i> Approuver</button>
+        <button class="btn btn-sm btn-danger" onclick="rejectProducer('${u.id}')"><i class="fas fa-times"></i> Refuser</button>
+      </td>
+    </tr>`).join('');
+}
+
 function approveProducer(id) {
   DB.updateUser(id, { status: 'active', approvedAt: new Date().toISOString() });
   renderProducersTable();
@@ -1123,6 +1186,28 @@ function saveSettings() {
   toast('Enregistré', 'Paramètres mis à jour.', 'success');
 }
 
+// Met à jour la liste des admins dans la carte "Gestion des administrateurs"
+function renderAdminList() {
+  const listEl = document.getElementById('adminList');
+  if (!listEl) return;
+  const admins = DB.getUsers().filter(u => u.role === 'admin');
+  if (admins.length === 0) {
+    listEl.innerHTML = '<span style="font-size:.8rem;color:var(--gray)">Aucun autre administrateur pour le moment.</span>';
+    return;
+  }
+  listEl.innerHTML = admins.map(u => {
+    const isCurrent = Auth.currentUser && Auth.currentUser.id === u.id;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;border-bottom:1px solid #F3F4F6">
+      <span><strong>${u.name}</strong><br><small>${u.email}</small></span>
+      ${isCurrent ? '<span class="badge badge-green">Vous</span>' : '<span class="badge badge-blue">Admin</span>'}
+    </div>`;
+  }).join('');
+}
+
+function goToUsersFromSettings() {
+  document.querySelector('.sb-link[data-section="users"]')?.click();
+}
+
 function exportData() {
   const data = {
     products: DB.getProducts(),
@@ -1166,6 +1251,9 @@ function fmt(n) { return Number(n).toLocaleString('fr-FR'); }
 //  INIT
 // ═══════════════════════════════════════════════════════════════
 renderDashboard();
+renderProducersTable();
+renderApprovalsTable();
+renderAdminList();
 </script>
 </body>
 </html>
