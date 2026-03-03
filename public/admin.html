@@ -1303,13 +1303,15 @@ function renderApprovalsTable() {
 }
 
 function approveProducer(id) {
-  const user = DB.getUsers().find(u => u.id == id);
+  const user = DB.getUsers().find(u => u.id === id);
   if (!user) return;
   
-  // Mettre à jour le statut du producteur
   DB.updateUser(id, { status: 'active', approvedAt: new Date().toISOString() });
+  renderProducersTable();
+  renderDashboard();
+  renderApprovalsTable();
   
-  // Envoyer notification via Formspree
+  // Envoyer une notification d'approbation via Formspree
   fetch('https://formspree.io/f/xqapevvv', {
     method: 'POST',
     headers: {
@@ -1324,11 +1326,6 @@ function approveProducer(id) {
       message: `✅ COMPTE PRODUCTEUR APPROUVÉ - ${user.name} peut maintenant se connecter à SMART-LOUMA`
     })
   }).catch(err => console.log('Erreur notification approbation:', err));
-  
-  // Rafraîchir les tables
-  renderProducersTable();
-  renderDashboard();
-  renderApprovalsTable();
   
   toast('Producteur approuvé', `${user.name} peut maintenant se connecter. Un email de notification a été envoyé.`, 'success');
 }
