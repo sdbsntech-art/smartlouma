@@ -966,16 +966,16 @@ section { padding: 6rem 0; }
 
 .chatbot-window {
   position:absolute;bottom:72px;right:0;
-  width:450px;height:600px;
+  width:340px;height:480px;
   background:var(--white);
-  border-radius:16px;
-  box-shadow:0 12px 40px rgba(0,0,0,.15);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
   display:flex;flex-direction:column;
   overflow:hidden;
-  transform:scale(.95) translateY(10px);
+  transform:scale(.9) translateY(10px);
+  transform-origin:bottom right;
   opacity:0;pointer-events:none;
   transition:all .3s cubic-bezier(.4,0,.2,1);
-  z-index:1600;
 }
 .chatbot-window.active { transform:scale(1) translateY(0);opacity:1;pointer-events:all; }
 
@@ -992,7 +992,6 @@ section { padding: 6rem 0; }
   flex:1;overflow-y:auto;
   padding:1.25rem;
   display:flex;flex-direction:column;gap:.75rem;
-  min-height:300px;
   scroll-behavior:smooth;
 }
 
@@ -1007,20 +1006,18 @@ section { padding: 6rem 0; }
 .msg-user .msg-bubble { background:var(--green);color:var(--white);border-bottom-right-radius:4px; }
 
 .chatbot-input-row {
-  padding:1rem 1.25rem;border-top:1px solid var(--cream-dark);
+  padding:.75rem 1rem;border-top:1px solid var(--cream-dark);
   display:flex;gap:.5rem;
-  background:var(--cream);
 }
 .chatbot-input-row input {
-  flex:1;padding:.65rem 1.1rem;border:2px solid var(--cream-dark);border-radius:50px;
-  font-size:.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:var(--transition);
-  height:44px;
+  flex:1;padding:.55rem 1rem;border:2px solid var(--cream-dark);border-radius:50px;
+  font-size:.85rem;font-family:'DM Sans',sans-serif;outline:none;transition:var(--transition);
 }
 .chatbot-input-row input:focus { border-color:var(--green); }
 .chatbot-send {
-  width:44px;height:44px;border-radius:50%;background:var(--green);color:var(--white);
+  width:38px;height:38px;border-radius:50%;background:var(--green);color:var(--white);
   border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:var(--transition);font-size:1rem;
+  transition:var(--transition);
 }
 .chatbot-send:hover { background:var(--green-dark); }
 
@@ -1286,7 +1283,7 @@ table {
   .kpi-row { grid-template-columns:1fr; }
   .modal-box { max-width:100%; }
   .swiper { height:350px; }
-  .chatbot-window { width:min(320px, calc(100vw - 2rem));height:450px;right:1rem; }
+  .chatbot-window { width:min(290px, calc(100vw - 2rem));height:420px;right:1rem; }
   .products-grid { grid-template-columns:repeat(2,1fr) !important; }
   .product-card { max-width:100%; }
   .cart-table { font-size:.8rem; }
@@ -1307,7 +1304,7 @@ table {
   .section-subtitle { font-size:.9rem; }
   .products-grid { grid-template-columns:1fr; }
   .product-card .product-body { padding:1rem; }
-  .chatbot-window { width:min(300px, calc(100vw - 2rem));height:480px;bottom:70px; }
+  .chatbot-window { width:calc(100vw - 2rem);bottom:70px; }
   .navbar { padding:0 0.75rem; height:60px; }
   .nav-links { top:60px; }
   .nav-actions .btn-outline,.nav-actions .btn-primary { 
