@@ -8,12 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    // Si servi depuis Laravel (port 8000), rediriger vers le dashboard Blade
-    if (window.location.port === '8000' && window.location.pathname.includes('admin')) {
-      window.location.replace('/admin');
-    }
-  </script>
+  <!-- Admin 100% JavaScript (db.js) — pas de Laravel -->
   <script src="db.js"></script>
   <style>
     :root {
@@ -179,6 +174,26 @@
     /* ── EMPTY STATE ── */
     .empty{text-align:center;padding:3rem;color:var(--gray)}
     .empty i{font-size:2.5rem;color:#D1D5DB;display:block;margin-bottom:.75rem}
+
+    /* ── APPROBATIONS (cartes) ── */
+    .approvals-list{display:flex;flex-direction:column;gap:1.25rem}
+    .approval-card{
+      background:#F9FAFB;border:2px solid #E5E7EB;border-radius:var(--radius);
+      padding:1.25rem 1.5rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;
+    }
+    .approval-card:hover{border-color:var(--green-light);background:#fff}
+    .approval-info h4{margin-bottom:.35rem;font-size:1.1rem}
+    .approval-info p{margin:0;font-size:.88rem;color:var(--gray)}
+    .approval-actions{display:flex;gap:.75rem;flex-wrap:wrap}
+    .approval-actions .btn{padding:.7rem 1.25rem;font-size:.95rem;min-width:140px}
+    .approval-actions .btn-primary{background:var(--green)}
+    .approval-actions .btn-danger{background:var(--red);color:#fff;border:none}
+    .approval-actions .btn-danger:hover{background:#B91C1C}
+    @media(max-width:640px){
+      .approval-card{grid-template-columns:1fr}
+      .approval-actions{width:100%;justify-content:stretch}
+      .approval-actions .btn{flex:1}
+    }
 
     /* ── RESPONSIVE ── */
     @media(max-width:1100px){
@@ -354,21 +369,16 @@
       </div>
     </div>
 
-    <!-- ===== APPROBATIONS PRODUCTEURS (vue simple) ===== -->
+    <!-- ===== APPROBATIONS PRODUCTEURS ===== -->
     <div class="section" id="sec-approvals">
       <div class="card">
         <div class="card-header">
           <h3><i class="fas fa-check-circle" style="color:var(--amber);margin-right:.4rem"></i>Demandes d'approbation producteurs</h3>
+          <span id="approvalsCountBadge" class="badge badge-amber" style="font-size:.9rem;padding:.4rem .75rem">0</span>
         </div>
         <div class="card-body">
-          <table>
-            <thead>
-              <tr>
-                <th>Nom</th><th>Email</th><th>Entreprise</th><th>Zone</th><th>Inscrit le</th><th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="approvalsTableBody"><!-- injecté --></tbody>
-          </table>
+          <p style="margin-bottom:1.25rem;color:var(--gray);font-size:.9rem">Les producteurs qui viennent de s'inscrire apparaissent ici. <strong>Confirmer</strong> pour les activer, <strong>Refuser</strong> pour supprimer la demande.</p>
+          <div id="approvalsList" class="approvals-list"><!-- cartes injectées --></div>
         </div>
       </div>
     </div>
@@ -1079,43 +1089,49 @@ function renderProducersTable() {
     </tr>`).join('');
 }
 
-// Vue simple des demandes d'approbation (section "Approbations")
+// Demandes d'approbation (section Approbations) — affichage en cartes
 function renderApprovalsTable() {
   const pending = DB.getUsers().filter(u => u.role === 'producer' && u.status === 'pending');
-  const tbody = document.getElementById('approvalsTableBody');
-  if (!tbody) return;
+  const listEl = document.getElementById('approvalsList');
+  const badgeEl = document.getElementById('approvalsCountBadge');
+  if (badgeEl) badgeEl.textContent = pending.length;
+  if (!listEl) return;
 
   if (pending.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fas fa-tractor"></i><p>Aucune demande d'approbation en attente</p><small>Les nouvelles inscriptions producteurs apparaîtront ici automatiquement.</small></div></td></tr>`;
+    listEl.innerHTML = '<div class="empty"><i class="fas fa-check-circle"></i><p>Aucune demande d\'approbation en attente</p><small>Dès qu\'un producteur s\'inscrit sur le site, sa demande apparaîtra ici.</small></div>';
     return;
   }
 
-  tbody.innerHTML = pending.map(u => `
-    <tr>
-      <td><strong>${u.name}</strong></td>
-      <td>${u.email}</td>
-      <td>${u.company || '—'}</td>
-      <td>${u.zone || '—'}</td>
-      <td>${new Date(u.createdAt).toLocaleDateString('fr-FR')}</td>
-      <td style="display:flex;gap:.35rem;flex-wrap:wrap">
-        <button class="btn btn-sm btn-primary" onclick="approveProducer('${u.id}')"><i class="fas fa-check"></i> Approuver</button>
-        <button class="btn btn-sm btn-danger" onclick="rejectProducer('${u.id}')"><i class="fas fa-times"></i> Refuser</button>
-      </td>
-    </tr>`).join('');
+  listEl.innerHTML = pending.map(u => `
+    <div class="approval-card">
+      <div class="approval-info">
+        <h4>${u.name}</h4>
+        <p><i class="fas fa-envelope" style="margin-right:.35rem"></i>${u.email}</p>
+        <p><i class="fas fa-building" style="margin-right:.35rem"></i>${u.company || '—'} &nbsp;|&nbsp; <i class="fas fa-map-marker-alt"></i> ${u.zone || '—'}</p>
+        <p style="font-size:.8rem;color:var(--gray);margin-top:.35rem">Inscrit le ${new Date(u.createdAt).toLocaleDateString('fr-FR')}</p>
+      </div>
+      <div class="approval-actions">
+        <button type="button" class="btn btn-primary" onclick="approveProducer('${u.id}')"><i class="fas fa-check"></i> Confirmer</button>
+        <button type="button" class="btn btn-danger" onclick="rejectProducer('${u.id}')"><i class="fas fa-times"></i> Refuser</button>
+      </div>
+    </div>`).join('');
 }
 
 function approveProducer(id) {
   DB.updateUser(id, { status: 'active', approvedAt: new Date().toISOString() });
+  renderApprovalsTable();
   renderProducersTable();
   renderDashboard();
   toast('Producteur approuvé', 'Le compte est maintenant actif.', 'success');
 }
 
 function rejectProducer(id) {
-  if (!confirm('Rejeter et supprimer ce compte producteur ?')) return;
+  if (!confirm('Refuser cette demande et supprimer le compte producteur ?')) return;
   DB.deleteUser(id);
+  renderApprovalsTable();
   renderProducersTable();
-  toast('Rejeté', 'Compte supprimé.', 'warning');
+  renderDashboard();
+  toast('Demande refusée', 'Le compte a été supprimé.', 'warning');
 }
 
 // ═══════════════════════════════════════════════════════════════

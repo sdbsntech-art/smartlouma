@@ -141,7 +141,7 @@ function initUIForUser() {
           </div>
         </div>
         <button class="btn btn-sm btn-outline" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span class="btn-text">Déconnexion</span></button>
-        ${user.role === 'admin' ? '<a href="' + (typeof USE_LARAVEL !== 'undefined' && USE_LARAVEL ? (window.location.port === '8000' ? '/admin' : 'http://localhost:8000/admin') : 'admin.html') + '" class="btn btn-sm btn-primary"><i class="fas fa-cogs"></i> <span class="btn-text">Admin</span></a>' : ''}`;
+        ${user.role === 'admin' ? '<a href="admin.html" class="btn btn-sm btn-primary"><i class="fas fa-cogs"></i> <span class="btn-text">Admin</span></a>' : ''}`;
       document.getElementById('logoutBtn')?.addEventListener('click', () => {
         Auth.logout(); location.reload();
       });
@@ -190,10 +190,7 @@ function initAuthModals() {
     closeModal('authModal');
     toast('Connexion réussie', `Bienvenue, ${result.user.name} !`, 'success');
     if (result.user.role === 'admin') {
-      const adminUrl = (typeof USE_LARAVEL !== 'undefined' && USE_LARAVEL)
-        ? (window.location.port === '8000' ? '/admin' : 'http://localhost:8000/admin')
-        : 'admin.html';
-      setTimeout(() => { window.location.href = adminUrl; }, 800);
+      setTimeout(() => { window.location.href = 'admin.html'; }, 800);
       return;
     }
     await loadAllData();
