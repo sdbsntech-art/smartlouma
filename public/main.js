@@ -756,17 +756,75 @@ function initProducerChart() {
    CHATBOT
    ============================================================ */
 const CHATBOT_KB = {
-  livraison: { kw:['livraison','délai','frais','expédition','port','demain'], ans:"🚚 <strong>Livraison SMART-LOUMA :</strong><br>• Gratuite à partir de 20 000 FCFA<br>• 5 000 FCFA sinon<br>• Délai : lendemain matin<br>• Zone : Dakar et périphérie" },
-  commande:  { kw:['commander','commande','acheter','panier','achat'],       ans:"🛒 <strong>Comment commander :</strong><br>1. Créez un compte (restaurateur)<br>2. Parcourez la marketplace<br>3. Ajoutez au panier (50 kg max/produit)<br>4. Validez → paiement à la livraison" },
-  conservation:{ kw:['conserver','conservation','stocker','durée','frais'], ans:"🌿 <strong>Conservation :</strong><br>• Carottes : sac perforé au frigo<br>• Tomates : température ambiante<br>• Oignons : endroit sec et aéré<br>• Légumes-feuilles : torchon humide au frigo" },
-  producteur:{ kw:['producteur','vendre','inscrire','ferme','agriculteur','approbation'], ans:"👨‍🌾 <strong>Devenir producteur :</strong><br>1. Inscrivez-vous → rôle \"Producteur\"<br>2. L'admin approuve votre compte<br>3. Ajoutez vos produits (max 50 kg/produit)<br>4. Fixez vos prix — nous gérons la logistique<br>📞 <strong>+221 77 777 77 77</strong>" },
-  paiement:  { kw:['paiement','payer','wave','orange money','espèces'],    ans:"💳 <strong>Modes de paiement :</strong><br>• Paiement à la livraison (espèces)<br>• Wave Money<br>• Orange Money<br>• Virement bancaire (grandes commandes)" },
-  disponible:{ kw:['disponible','stock','catalogue','produit','légume','fruit'], ans:"📦 <strong>Produits disponibles :</strong><br>Consultez notre marketplace pour voir les produits actuellement en stock. Les disponibilités sont mises à jour en temps réel par nos producteurs." },
-  default:   "Bonjour ! Je suis l'assistant SMART-LOUMA. Je peux vous aider sur la <strong>livraison</strong>, les <strong>commandes</strong>, la <strong>conservation</strong>, les <strong>producteurs</strong>, le <strong>paiement</strong> ou les <strong>produits disponibles</strong>. Comment puis-je vous aider ?"
+  // Livraison / logistique
+  livraison: {
+    kw:['livraison','livrer','délai','frais','expédition','port','demain','transport','camion'],
+    ans:"🚚 <strong>Livraison SMART-LOUMA :</strong><br>• Zone : principalement Dakar et sa périphérie<br>• Délai standard : <strong>le lendemain matin</strong> après validation de la commande<br>• Livraison gratuite à partir de <strong>20 000 FCFA</strong>, sinon <strong>5 000 FCFA</strong><br>• Les tournées sont organisées de façon groupée depuis la zone des Niayes pour limiter les coûts et le gaspillage."
+  },
+
+  // Commandes / marketplace
+  commande:  {
+    kw:['commander','commande','acheter','panier','achat','commande minimum','minimum'],
+    ans:"🛒 <strong>Comment commander :</strong><br>1. Créez un compte en choisissant <strong>Restaurateur / Hôtel</strong><br>2. Parcourez la marketplace et filtrez par zone, catégorie ou lettre<br>3. Ajoutez vos produits au panier (limite <strong>50 kg par produit</strong>)<br>4. Validez votre commande → <strong>paiement à la livraison</strong> (espèces, Wave, Orange Money)."
+  },
+
+  // Conservation produits
+  conservation:{
+    kw:['conserver','conservation','stocker','durée','frais','frigo','entreposer'],
+    ans:"🌿 <strong>Quelques conseils de conservation :</strong><br>• <strong>Carottes</strong> : au frais dans un sac perforé ou bac du frigo<br>• <strong>Tomates</strong> : température ambiante, à l'abri du soleil (éviter le frigo)<br>• <strong>Oignons / Ail</strong> : endroit sec, ventilé, jamais au frigo<br>• <strong>Légumes-feuilles (salades, bissap, gombo tendre)</strong> : torchon légèrement humide au frigo et utilisation rapide."
+  },
+
+  // Producteurs
+  producteur:{
+    kw:['producteur','vendre','inscrire','ferme','agriculteur','approbation','approuver','niayes'],
+    ans:"👨‍🌾 <strong>Devenir producteur partenaire :</strong><br>1. Créez un compte en choisissant le rôle <strong>Producteur Agricole</strong><br>2. Indiquez le nom de votre exploitation et votre zone (Niayes, Dakar, Thiès, etc.)<br>3. Votre demande apparaît dans le <strong>tableau de bord admin</strong> pour approbation<br>4. Une fois approuvé, vous pouvez ajouter vos produits (max 50 kg/produit) et fixer vos prix.<br>📍 Ciblé surtout sur la <strong>zone des Niayes</strong> pour l'instant."
+  },
+
+  // Restaurateurs / hôtels
+  restaurateur: {
+    kw:['restaurateur','restaurant','chef','hôtel','hotel','cuisine'],
+    ans:"🍽️ <strong>Pour les restaurateurs et hôtels :</strong><br>• Création de compte gratuite<br>• Accès à un catalogue de producteurs des Niayes et d'autres régions<br>• Prix <strong>direct producteur</strong>, sans intermédiaires<br>• Livraison groupée le matin pour vous permettre de préparer le service du midi.<br>Vous pouvez aussi contacter l'équipe via WhatsApp dans la section Contact pour des volumes spécifiques."
+  },
+
+  // Paiement
+  paiement:  {
+    kw:['paiement','payer','wave','orange money','espèces','espece','cash','virement'],
+    ans:"💳 <strong>Modes de paiement :</strong><br>• Paiement à la livraison en <strong>espèces</strong><br>• <strong>Wave Money</strong><br>• <strong>Orange Money</strong><br>• Virement bancaire possible pour les gros volumes et contrats réguliers."
+  },
+
+  // Disponibilité / stock
+  disponible:{
+    kw:['disponible','stock','catalogue','produit','légume','fruit','rupture'],
+    ans:"📦 <strong>Produits disponibles :</strong><br>La marketplace affiche uniquement les produits <strong>avec stock disponible</strong> et marqués \"visibles\" par les producteurs ou l'admin.<br>Si un produit n'apparaît plus, c'est que le stock a été vendu ou masqué par le producteur."
+  },
+
+  // Administration / rôles
+  admin: {
+    kw:['admin','administrateur','tableau de bord','dashboard','espace admin','approbation','privileges'],
+    ans:"🛡️ <strong>Espace administrateur :</strong><br>• Connexion avec un compte admin → accès à la page <strong>admin</strong><br>• Depuis le dashboard, l'admin peut :<br>&nbsp;&nbsp;– Approuver ou refuser les producteurs en attente<br>&nbsp;&nbsp;– Créer / promouvoir d'autres <strong>administrateurs</strong><br>&nbsp;&nbsp;– Gérer les produits, commandes et paramètres (livraison, seuils, etc.)."
+  },
+
+  // Contexte Sénégal / zones de production
+  senegal: {
+    kw:['sénégal','senegal','niayes','dakar','thiès','thies','kaolack','saint-louis','saint louis'],
+    ans:"🇸🇳 <strong>Contexte SMART-LOUMA au Sénégal :</strong><br>• Focus sur les producteurs maraîchers de la <strong>zone des Niayes</strong> (forte production de légumes)<br>• Livraison orientée vers les restaurateurs et hôtels de <strong>Dakar</strong><br>• Possibilités d'extension vers Thiès, Saint-Louis, Kaolack selon la demande.<br>L'objectif est de réduire le gaspillage et les pertes post-récolte tout en sécurisant l'approvisionnement des restaurants."
+  },
+
+  // Support / contact
+  support: {
+    kw:['aide','support','problème','bug','contact','whatsapp','question','besoin'],
+    ans:"📞 <strong>Support SMART-LOUMA :</strong><br>• Pour un problème technique, vous pouvez utiliser le <strong>formulaire de contact</strong> en bas de page<br>• Ou nous écrire directement sur WhatsApp via les boutons dans la section Contact (restaurateurs / producteurs).<br>Expliquez votre problème (connexion, commande, produit...) et l'équipe vous répondra."
+  },
+
+  default:   "Bonjour ! Je suis l'assistant SMART-LOUMA. Je peux vous aider sur la <strong>livraison</strong>, les <strong>commandes</strong>, les <strong>producteurs</strong>, les <strong>restaurateurs</strong>, le <strong>paiement</strong> et le contexte de la <strong>production au Sénégal</strong>. Posez votre question librement, même de manière naturelle."
 };
 
 function getBotResponse(msg) {
   const lower = msg.toLowerCase();
+  // Salutations / ton gentil
+  if (lower.includes('bonjour') || lower.includes('salut') || lower.includes('salam') || lower.includes('hello') || lower.includes('bonsoir') || lower.includes('ça va') || lower.includes('ca va')) {
+    return "👋 Bonjour et bienvenue sur SMART-LOUMA !<br>Je suis un assistant virtuel spécialisé dans la plateforme : livraison, commandes, producteurs, restaurateurs et fonctionnement au Sénégal. Dites-moi simplement ce que vous cherchez et je vous guide.";
+  }
   for (const key in CHATBOT_KB) {
     if (key === 'default') continue;
     if (CHATBOT_KB[key].kw.some(w => lower.includes(w))) return CHATBOT_KB[key].ans;

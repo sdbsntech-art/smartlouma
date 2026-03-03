@@ -613,9 +613,11 @@ let revenueChartInst, catChartInst;
 function renderDashboard() {
   const stats = DB.getStats();
 
+  const pendingProd = stats.pendingProducers || 0;
+
   const kpiConf = [
     { label:'Produits disponibles', val:stats.availableProducts, total:'/ '+stats.totalProducts+' total', icon:'fas fa-box', color:'#2D6A4F', bg:'#D8F3DC', accent:'#2D6A4F', trend:'trend-neutral', trendTxt:'Aucune vente encore' },
-    { label:'Producteurs actifs',   val:stats.totalProducers,  total:stats.pendingProducers+' en attente', icon:'fas fa-tractor', color:'#92400E', bg:'#FEF3C7', accent:'#E9820C', trend:'trend-neutral', trendTxt:'Nouveau marché' },
+    { label:'Producteurs actifs',   val:stats.totalProducers,  total: (pendingProd > 0 ? pendingProd + ' en attente' : 'Aucune demande en attente'), icon:'fas fa-tractor', color:'#92400E', bg:'#FEF3C7', accent:'#E9820C', trend:'trend-neutral', trendTxt:(pendingProd > 0 ? pendingProd + ' producteur(s) à approuver' : 'Nouveau marché') },
     { label:'Commandes totales',    val:stats.totalOrders,   total:'commandes', icon:'fas fa-shopping-bag', color:'#1D4ED8', bg:'#DBEAFE', accent:'#1D4ED8', trend:'trend-neutral', trendTxt:'Démarrage' },
     { label:'Chiffre d\'affaires',  val:fmt(stats.totalRevenue)+' F', total:'', icon:'fas fa-coins', color:'#7C3AED', bg:'#EDE9FE', accent:'#7C3AED', trend:'trend-neutral', trendTxt:'0 FCFA à ce jour' },
   ];
@@ -685,6 +687,7 @@ function renderDashboard() {
   // Activités récentes
   const orders = DB.getOrders().slice(-5).reverse();
   const users  = DB.getUsers().slice(-3).reverse();
+  const pendingProducers = DB.getUsers().filter(u => u.role === 'producer' && u.status === 'pending').slice(-5).reverse();
   const recentEl = document.getElementById('recentActivity');
   if (orders.length === 0 && users.length === 0) {
     recentEl.innerHTML = '<div class="empty"><i class="fas fa-clock"></i><p>Aucune activité récente</p><small>Les activités apparaîtront ici au fur et à mesure</small></div>';
@@ -692,6 +695,7 @@ function renderDashboard() {
     const activities = [
       ...orders.map(o => ({ type:'order', date:o.createdAt, text:`Commande #${o.id.slice(-6)} — ${fmt(o.total)} FCFA`, icon:'fa-shopping-bag', color:'#2D6A4F' })),
       ...users.map(u => ({ type:'user', date:u.createdAt, text:`Nouvel utilisateur : ${u.name} (${u.role})`, icon:'fa-user-plus', color:'#1D4ED8' })),
+      ...pendingProducers.map(u => ({ type:'producer_pending', date:u.createdAt, text:`Demande producteur : ${u.name}`, icon:'fa-tractor', color:'#E9820C' })),
     ].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,8);
 
     recentEl.innerHTML = activities.map(a => `
@@ -902,6 +906,12 @@ function renderUsersTable() {
       <td>${u.zone || '—'}</td>
       <td>${new Date(u.createdAt).toLocaleDateString('fr-FR')}</td>
       <td style="display:flex;gap:.35rem">
+        ${u.role !== 'admin'
+          ? `<button class="btn btn-sm btn-amber" onclick="makeAdmin('${u.id}')"><i class="fas fa-user-shield"></i> Admin</button>`
+          : (Auth.currentUser && Auth.currentUser.id !== u.id
+             ? `<button class="btn btn-sm btn-outline" onclick="removeAdmin('${u.id}')"><i class="fas fa-user"></i> Retirer admin</button>`
+             : '')
+        }
         ${u.status === 'active' ? `<button class="btn btn-sm" style="background:#FEF3C7;color:#92400E;border:none" onclick="suspendUser('${u.id}')"><i class="fas fa-pause"></i> Suspendre</button>` : ''}
         ${u.status === 'suspended' ? `<button class="btn btn-sm btn-primary" onclick="reactivateUser('${u.id}')"><i class="fas fa-play"></i> Réactiver</button>` : ''}
         <button class="btn-icon red" onclick="deleteUser('${u.id}')"><i class="fas fa-trash"></i></button>
@@ -920,10 +930,40 @@ function reactivateUser(id) {
   toast('Réactivé', 'Le compte est de nouveau actif.', 'success');
 }
 function deleteUser(id) {
+  const user = DB.getUsers().find(u => u.id === id);
+  if (user && user.role === 'admin') {
+    if (Auth.currentUser && Auth.currentUser.id === id) {
+      toast('Action impossible', 'Vous ne pouvez pas supprimer votre propre compte administrateur.', 'error');
+      return;
+    }
+  }
   if (!confirm('Supprimer cet utilisateur définitivement ?')) return;
   DB.deleteUser(id);
   renderUsersTable();
   toast('Supprimé', 'Compte utilisateur supprimé.', 'warning');
+}
+
+function makeAdmin(id) {
+  const user = DB.getUsers().find(u => u.id === id);
+  if (!user) return;
+  DB.updateUser(id, { role: 'admin', status: 'active' });
+  renderUsersTable();
+  renderProducersTable();
+  renderDashboard();
+  toast('Rôle mis à jour', `${user.name} est maintenant administrateur.`, 'success');
+}
+
+function removeAdmin(id) {
+  const user = DB.getUsers().find(u => u.id === id);
+  if (!user) return;
+  if (Auth.currentUser && Auth.currentUser.id === id) {
+    toast('Action impossible', 'Vous ne pouvez pas retirer votre propre rôle administrateur.', 'error');
+    return;
+  }
+  DB.updateUser(id, { role: 'consumer' });
+  renderUsersTable();
+  renderDashboard();
+  toast('Rôle mis à jour', `Le rôle administrateur de ${user.name} a été retiré.`, 'success');
 }
 
 // ═══════════════════════════════════════════════════════════════
