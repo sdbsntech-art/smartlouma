@@ -555,19 +555,95 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  INIT
+//  INIT - VERSION JAVASCRIPT PURE
 // ═══════════════════════════════════════════════════════════════
-Auth.init();
-
-// Vérifier accès admin
-if (!Auth.isAdmin()) {
-  window.location.href = 'index.html';
+// Vérifier si on est sur la bonne page
+if (window.location.pathname.includes('admin.html')) {
+  initAdminDashboard();
 }
 
-// Remplir infos admin dans sidebar
-document.getElementById('adminName').textContent  = Auth.currentUser?.name || 'Admin';
-document.getElementById('adminEmail').textContent = Auth.currentUser?.email || '';
-document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+function initAdminDashboard() {
+  // Créer l'admin par défaut si inexistant
+  if (!localStorage.getItem('users')) {
+    const defaultUsers = [
+      {
+        id: 1,
+        name: 'Seydou Bakhay Okho',
+        email: 'seydoubakhayokho1@gmail.com',
+        password: 'louma',
+        role: 'admin',
+        status: 'active',
+        company: 'SMART-LOUMA',
+        zone: 'Dakar',
+        created_at: new Date().toISOString()
+      }
+    ];
+    localStorage.setItem('users', JSON.stringify(defaultUsers));
+  }
+
+  // Vérifier connexion admin
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+  if (!currentUser || currentUser.role !== 'admin') {
+    // Rediriger vers la page de connexion simple
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--green-dark);font-family:'DM Sans',sans-serif">
+        <div style="background:white;padding:3rem;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);max-width:400px;width:100%">
+          <h2 style="text-align:center;margin-bottom:2rem;color:var(--green)">Connexion Admin</h2>
+          <form onsubmit="adminLogin(event)">
+            <div style="margin-bottom:1rem">
+              <label style="display:block;margin-bottom:.5rem;font-weight:600">Email</label>
+              <input type="email" id="adminEmail" required style="width:100%;padding:.75rem;border:2px solid #E5E7EB;border-radius:8px;font-size:1rem">
+            </div>
+            <div style="margin-bottom:1.5rem">
+              <label style="display:block;margin-bottom:.5rem;font-weight:600">Mot de passe</label>
+              <input type="password" id="adminPassword" required style="width:100%;padding:.75rem;border:2px solid #E5E7EB;border-radius:8px;font-size:1rem">
+            </div>
+            <button type="submit" style="width:100%;padding:.75rem;background:var(--green);color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer">
+              Se connecter
+            </button>
+          </form>
+          <div id="loginError" style="color:red;margin-top:1rem;text-align:center;display:none"></div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Admin connecté - initialiser le dashboard
+  document.getElementById('adminName').textContent = currentUser.name;
+  document.getElementById('adminEmail').textContent = currentUser.email;
+  document.getElementById('topbarDate').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  
+  // Initialiser les événements
+  initNavigation();
+  initTabs();
+  renderDashboard();
+  renderProducersTable();
+  renderApprovalsTable();
+}
+
+function adminLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById('adminEmail').value;
+  const password = document.getElementById('adminPassword').value;
+  const errorDiv = document.getElementById('loginError');
+  
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const admin = users.find(u => u.email === email && u.password === password && u.role === 'admin');
+  
+  if (admin) {
+    localStorage.setItem('currentUser', JSON.stringify(admin));
+    location.reload();
+  } else {
+    errorDiv.textContent = 'Email ou mot de passe incorrect';
+    errorDiv.style.display = 'block';
+  }
+}
+
+function adminLogout() {
+  localStorage.removeItem('currentUser');
+  location.reload();
+}
 
 // Toggle sidebar mobile
 function toggleSidebar() {
@@ -632,8 +708,130 @@ function refreshSection(sec) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  TOAST
+//  BASE DE DONNÉES JAVASCRIPT
 // ═══════════════════════════════════════════════════════════════
+const DB = {
+  getUsers() {
+    return JSON.parse(localStorage.getItem('users') || '[]');
+  },
+  
+  saveUsers(users) {
+    localStorage.setItem('users', JSON.stringify(users));
+  },
+  
+  addUser(userData) {
+    const users = this.getUsers();
+    const newUser = {
+      id: Date.now(),
+      ...userData,
+      created_at: new Date().toISOString()
+    };
+    users.push(newUser);
+    this.saveUsers(users);
+    return newUser;
+  },
+  
+  updateUser(id, data) {
+    const users = this.getUsers();
+    const index = users.findIndex(u => u.id == id);
+    if (index !== -1) {
+      users[index] = { ...users[index], ...data };
+      this.saveUsers(users);
+    }
+  },
+  
+  deleteUser(id) {
+    const users = this.getUsers();
+    const filtered = users.filter(u => u.id != id);
+    this.saveUsers(filtered);
+  },
+  
+  getProducts() {
+    return JSON.parse(localStorage.getItem('sl_products') || '[]');
+  },
+  
+  saveProducts(products) {
+    localStorage.setItem('sl_products', JSON.stringify(products));
+  },
+  
+  createProduct(data, producer) {
+    const products = this.getProducts();
+    const newProduct = {
+      id: Date.now().toString(),
+      ...data,
+      producerId: producer.id,
+      producerName: producer.name,
+      available: data.available !== false,
+      createdAt: new Date().toISOString()
+    };
+    products.push(newProduct);
+    this.saveProducts(products);
+    return newProduct;
+  },
+  
+  updateProduct(id, data) {
+    const products = this.getProducts();
+    const index = products.findIndex(p => p.id === id);
+    if (index !== -1) {
+      products[index] = { ...products[index], ...data };
+      this.saveProducts(products);
+    }
+  },
+  
+  deleteProduct(id) {
+    const products = this.getProducts();
+    const filtered = products.filter(p => p.id !== id);
+    this.saveProducts(filtered);
+  },
+  
+  getProduct(id) {
+    const products = this.getProducts();
+    return products.find(p => p.id === id);
+  },
+  
+  getOrders() {
+    return JSON.parse(localStorage.getItem('sl_orders') || '[]');
+  },
+  
+  getStats() {
+    const users = this.getUsers();
+    const products = this.getProducts();
+    const orders = this.getOrders();
+    
+    return {
+      totalProducts: products.length,
+      availableProducts: products.filter(p => p.available).length,
+      totalProducers: users.filter(u => u.role === 'producer' && u.status === 'active').length,
+      pendingProducers: users.filter(u => u.role === 'producer' && u.status === 'pending').length,
+      totalOrders: orders.length,
+      totalRevenue: orders.reduce((sum, o) => sum + (o.total || 0), 0),
+      monthlySales: this.getMonthlySales(orders)
+    };
+  },
+  
+  getMonthlySales(orders) {
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const label = date.toLocaleDateString('fr-FR', { month: 'short' });
+      
+      const monthOrders = orders.filter(o => {
+        const orderDate = new Date(o.createdAt);
+        return orderDate.getMonth() === date.getMonth() && 
+               orderDate.getFullYear() === date.getFullYear();
+      });
+      
+      months.push({
+        label,
+        revenue: monthOrders.reduce((sum, o) => sum + (o.total || 0), 0),
+        orders: monthOrders.length,
+        qty: monthOrders.reduce((sum, o) => sum + (o.totalQty || 0), 0)
+      });
+    }
+    return months;
+  }
+};
 function toast(title, msg, type = 'success') {
   const el = document.createElement('div');
   el.className = `toast ${type}`;
@@ -1105,15 +1303,13 @@ function renderApprovalsTable() {
 }
 
 function approveProducer(id) {
-  const user = DB.getUsers().find(u => u.id === id);
+  const user = DB.getUsers().find(u => u.id == id);
   if (!user) return;
   
+  // Mettre à jour le statut du producteur
   DB.updateUser(id, { status: 'active', approvedAt: new Date().toISOString() });
-  renderProducersTable();
-  renderDashboard();
-  renderApprovalsTable();
   
-  // Envoyer une notification d'approbation via Formspree
+  // Envoyer notification via Formspree
   fetch('https://formspree.io/f/xqapevvv', {
     method: 'POST',
     headers: {
@@ -1128,6 +1324,11 @@ function approveProducer(id) {
       message: `✅ COMPTE PRODUCTEUR APPROUVÉ - ${user.name} peut maintenant se connecter à SMART-LOUMA`
     })
   }).catch(err => console.log('Erreur notification approbation:', err));
+  
+  // Rafraîchir les tables
+  renderProducersTable();
+  renderDashboard();
+  renderApprovalsTable();
   
   toast('Producteur approuvé', `${user.name} peut maintenant se connecter. Un email de notification a été envoyé.`, 'success');
 }

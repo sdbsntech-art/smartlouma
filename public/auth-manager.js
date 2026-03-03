@@ -45,15 +45,9 @@ class AuthManager {
         message: `Nouvelle inscription : ${userData.name} (${userData.role}${userData.role === 'producer' ? ' - EN ATTENTE D\'APPROBATION' : ''})`
       });
 
-      // Connecter automatiquement l'utilisateur sauf pour les producteurs qui doivent attendre l'approbation
+      // Ne pas connecter automatiquement les producteurs en attente
       if (userData.role !== 'producer') {
         this.login(userData.email, userData.password);
-      } else {
-        // Pour les producteurs, créer une session temporaire en lecture seule
-        const tempUser = { ...newUser, pendingApproval: true };
-        this.currentUser = tempUser;
-        localStorage.setItem('currentUser', JSON.stringify(tempUser));
-        this.updateUI();
       }
       
       return { success: true, user: newUser };
